@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadu ScreenX - Movie Recap Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.03) 35px, rgba(255,255,255,.03) 70px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            border-radius: 25px 25px 0 0;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 5px solid #ffd93d;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🐐';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            top: -30px;
+            right: -30px;
+            transform: rotate(-15deg);
+        }
+
+        .header::after {
+            content: '🐐';
+            position: absolute;
+            font-size: 150px;
+            opacity: 0.1;
+            bottom: -30px;
+            left: -30px;
+            transform: rotate(15deg);
+        }
+
+        .logo {
+            font-size: 3.5em;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 4px 4px 0 #000, 
+                         -2px -2px 0 #000,  
+                         2px -2px 0 #000,
+                         -2px 2px 0 #000,
+                         0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tagline {
+            font-size: 1.3em;
+            color: #ffd93d;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1em;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .main-content {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 0 0 25px 25px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            border: 5px solid #ffd93d;
+            border-top: none;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 8px solid #ffd93d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box strong {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #ffd93d;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-box li::before {
+            content: '🐐';
+            position: absolute;
+            left: 0;
+            font-size: 16px;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+
+        .input-section:hover {
+            border-color: #ff6b6b;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 700;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            border: 3px solid #667eea;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 600;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            transform: scale(1.02);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 20px;
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            font-weight: 600;
+        }
+
+        input[type="file"]:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-item {
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 5px solid #ffd93d;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.5em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            border: 4px solid #ffd93d;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(255, 107, 107, 0.6);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 30px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            border: 4px solid #ffd93d;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            border-top: 6px solid #ffd93d;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: white;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6348 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            display: none;
+            font-weight: 700;
+            border: 4px solid #ffd93d;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            display: none;
+            border: 4px solid #ffd93d;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 0 #ffd93d;
+            border-bottom: 4px solid #ff6b6b;
+            padding-bottom: 15px;
+        }
+
+        #scriptContent {
+            white-space: pre-wrap;
+            line-height: 2;
+            color: #2c3e50;
+            font-size: 16px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 6px solid #667eea;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .goat-emoji {
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        code {
+            background: #ffd93d;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 14px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <span class="goat-emoji">🐐</span> AADU SCREENX <span class="goat-emoji">🐐</span>
+            </div>
+            <div class="tagline">ORU BHEEGARA JEEVI AANU</div>
+            <div class="subtitle">The Ultimate Movie Recap Generator</div>
+        </div>
+
+        <div class="main-content">
+            <div class="info-box">
+                <strong>🎬 How to Generate Your Aadu Recap:</strong>
+                <ul>
+                    <li>Enter movie names separated by commas</li>
+                    <li>Upload multiple SRT subtitle files (in same order)</li>
+                    <li>Click the generate button and wait for AI magic</li>
+                    <li>Get a comprehensive story summary in 1-2 minutes</li>
+                </ul>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="movieNames">🎥 Movie Names (comma separated)</label>
+                    <input 
+                        type="text" 
+                        id="movieNames" 
+                        placeholder="Example: Aadu (2015), Aadu 2 (2017)" 
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="srtFiles">📁 Upload SRT Subtitle Files</label>
+                    <input 
+                        type="file" 
+                        id="srtFiles" 
+                        accept=".srt"
+                        multiple
+                        onchange="showFileInfo()"
+                    >
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateCombinedScript()">
+                🐐 Generate Recap Script 🐐
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>🐐 Generating your Aadu recap... Please wait! 🐐</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="result" id="result">
+                <h2>🎬 Your Aadu Recap Story 🐐</h2>
+                <pre id="scriptContent"></pre>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by Gemini AI • Server: <code>http://localhost:3000</code></p>
+            <p style="margin-top: 10px;">🐐 "A Dangerous Animal" - The Aadu Saga 🐐</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        function showFileInfo() {
+            const fileInput = document.getElementById('srtFiles');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (fileInput.files.length > 0) {
+                let html = '';
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    html += `<div class="file-item">🐐 ${file.name} (${sizeMB} MB)</div>`;
+                }
+                fileInfo.innerHTML = html;
+                fileInfo.classList.add('show');
+            } else {
+                fileInfo.classList.remove('show');
+            }
+        }
+
+        async function generateCombinedScript() {
+            const movieNames = document.getElementById('movieNames').value.trim();
+            const fileInput = document.getElementById('srtFiles');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            const btn = document.getElementById('generateBtn');
+            const scriptContent = document.getElementById('scriptContent');
+
+            // Validate input
+            if (!movieNames) {
+                showError('Please enter movie names separated by commas');
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select at least one SRT file');
+                return;
+            }
+
+            const movieNamesArray = movieNames.split(',').map(n => n.trim());
+            if (movieNamesArray.length !== fileInput.files.length) {
+                showError(`Number of movie names (${movieNamesArray.length}) must match number of files (${fileInput.files.length})`);
+                return;
+            }
+
+            // Reset UI
+            loading.classList.add('show');
+            error.classList.remove('show');
+            result.classList.remove('show');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('movieNames', movieNames);
+                
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('srtFiles', fileInput.files[i]);
+                }
+
+                const response = await fetch(`${API_URL}/movie/generate-combined-script`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate combined script');
+                }
+
+                // Show result with smooth scroll
+                scriptContent.textContent = data.script;
+                result.classList.add('show');
+                result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ Error: ' + message;
+            error.classList.add('show');
+            error.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

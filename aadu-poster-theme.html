@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aadu ScreenX - Movie Recap Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif;
+            background: linear-gradient(to bottom, 
+                #ff9966 0%, 
+                #ffcc66 20%, 
+                #ffdd88 40%, 
+                #f4a460 60%, 
+                #d2691e 80%, 
+                #8b4513 100%
+            );
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Golden wheat field pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(218, 165, 32, 0.1) 2px,
+                    rgba(218, 165, 32, 0.1) 4px
+                );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, 
+                #ff6b35 0%, 
+                #ff8c42 25%, 
+                #ffa600 50%, 
+                #ff8c42 75%, 
+                #ff6b35 100%
+            );
+            border-radius: 30px 30px 0 0;
+            padding: 50px 40px 40px;
+            text-align: center;
+            box-shadow: 
+                0 -5px 30px rgba(255, 165, 0, 0.5),
+                0 10px 50px rgba(0, 0, 0, 0.4),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            border: 6px solid #ffdd88;
+            border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sun rays effect */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(
+                from 0deg,
+                transparent 0deg 5deg,
+                rgba(255, 255, 255, 0.1) 5deg 10deg
+            );
+            animation: rotate 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Van silhouette */
+        .van-icon {
+            font-size: 100px;
+            margin-bottom: 10px;
+            filter: drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5));
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 4em;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                5px 5px 0 #000,
+                -2px -2px 0 #000,  
+                2px -2px 0 #000,
+                -2px 2px 0 #000,
+                0 5px 15px rgba(0, 0, 0, 0.8);
+            letter-spacing: 5px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            color: #ffdd88;
+            font-weight: 900;
+            text-shadow: 
+                3px 3px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .subtitle {
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            position: relative;
+            z-index: 2;
+        }
+
+        .main-content {
+            background: linear-gradient(to bottom, #fef5e7 0%, #fdebd0 100%);
+            border-radius: 0 0 30px 30px;
+            padding: 45px;
+            box-shadow: 
+                0 10px 50px rgba(0, 0, 0, 0.4),
+                inset 0 3px 10px rgba(255, 165, 0, 0.2);
+            border: 6px solid #ffdd88;
+            border-top: none;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #8b4513 0%, #d2691e 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 35px;
+            border: 4px solid #ffdd88;
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-box strong {
+            display: block;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #ffdd88;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 8px 0;
+            padding-left: 30px;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .info-box li::before {
+            content: '🚐';
+            position: absolute;
+            left: 0;
+            font-size: 18px;
+        }
+
+        .input-section {
+            background: linear-gradient(to bottom, #fff 0%, #fef5e7 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 4px solid #ff8c42;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 2px 5px rgba(255, 165, 0, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #8b4513;
+            font-weight: 900;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 1px 1px 2px rgba(255, 165, 0, 0.3);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 18px 22px;
+            border: 4px solid #ff8c42;
+            border-radius: 15px;
+            font-size: 17px;
+            transition: all 0.3s;
+            background: #fff;
+            font-weight: 700;
+            color: #8b4513;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 
+                0 0 0 5px rgba(255, 107, 53, 0.2),
+                0 5px 15px rgba(255, 107, 53, 0.3);
+            transform: scale(1.02);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 22px;
+            border: 4px dashed #ff8c42;
+            border-radius: 15px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fff;
+            font-weight: 700;
+            color: #8b4513;
+        }
+
+        input[type="file"]:hover {
+            border-color: #ff6b35;
+            background: #fff5e6;
+            border-style: solid;
+        }
+
+        .file-info {
+            margin-top: 18px;
+            padding: 18px;
+            background: #fef5e7;
+            border-radius: 12px;
+            border: 3px solid #ffdd88;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-item {
+            padding: 15px;
+            background: linear-gradient(135deg, #ff8c42 0%, #ffa600 100%);
+            color: white;
+            margin: 10px 0;
+            border-radius: 10px;
+            border-left: 6px solid #ffdd88;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 25px;
+            background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 25%, #ffa600 50%, #ff8c42 75%, #ff6b35 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.8em;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 
+                0 10px 30px rgba(255, 107, 53, 0.5),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+            border: 5px solid #ffdd88;
+            text-shadow: 
+                3px 3px 0 #000,
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0 15px 40px rgba(255, 107, 53, 0.7),
+                inset 0 -3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-btn:active:not(:disabled) {
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 35px 0;
+            padding: 35px;
+            background: linear-gradient(135deg, #8b4513 0%, #d2691e 100%);
+            border-radius: 20px;
+            border: 5px solid #ffdd88;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 8px solid rgba(255, 255, 255, 0.3);
+            border-top: 8px solid #ffdd88;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 25px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: white;
+            font-size: 1.3em;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .error {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            display: none;
+            font-weight: 900;
+            border: 5px solid #ffdd88;
+            box-shadow: 0 8px 20px rgba(192, 57, 43, 0.4);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            background: linear-gradient(to bottom, #fef5e7 0%, #fdebd0 100%);
+            padding: 35px;
+            border-radius: 20px;
+            margin-top: 35px;
+            display: none;
+            border: 5px solid #ffdd88;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.3),
+                inset 0 2px 10px rgba(255, 165, 0, 0.2);
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h2 {
+            color: #ff6b35;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 
+                3px 3px 0 #ffdd88,
+                -1px -1px 0 #ffdd88,
+                1px -1px 0 #ffdd88,
+                -1px 1px 0 #ffdd88;
+            border-bottom: 5px solid #ff8c42;
+            padding-bottom: 18px;
+        }
+
+        #scriptContent {
+            white-space: pre-wrap;
+            line-height: 2;
+            color: #5d4037;
+            font-size: 17px;
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 8px solid #ff8c42;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                inset 0 2px 5px rgba(255, 165, 0, 0.05);
+            font-family: Georgia, serif;
+        }
+
+        .goat-emoji {
+            display: inline-block;
+            animation: bounce 2s infinite;
+            font-size: 1.2em;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        code {
+            background: #ffdd88;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: 900;
+            color: #8b4513;
+            border: 2px solid #ff8c42;
+        }
+
+        .footer {
+            text-align: center;
+            color: #ffdd88;
+            margin-top: 35px;
+            font-size: 15px;
+            font-weight: 900;
+            text-shadow: 
+                2px 2px 4px rgba(0, 0, 0, 0.8),
+                -1px -1px 0 #000,
+                1px -1px 0 #000,
+                -1px 1px 0 #000;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="van-icon">🚐</div>
+            <div class="logo">
+                <span class="goat-emoji">🐐</span> AADU <span class="goat-emoji">🐐</span>
+            </div>
+            <div class="tagline">ORU BHEEGARA JEEVI AANU</div>
+            <div class="subtitle">The Ultimate Movie Recap Generator</div>
+        </div>
+
+        <div class="main-content">
+            <div class="info-box">
+                <strong>🎬 How to Generate Your Aadu Recap:</strong>
+                <ul>
+                    <li>Enter movie names separated by commas</li>
+                    <li>Upload multiple SRT subtitle files (in same order)</li>
+                    <li>Click the generate button and enjoy the ride!</li>
+                    <li>Get your complete story summary in 1-2 minutes</li>
+                </ul>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="movieNames">🎥 Movie Names</label>
+                    <input 
+                        type="text" 
+                        id="movieNames" 
+                        placeholder="Example: Aadu (2015), Aadu 2 (2017)" 
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="srtFiles">📁 Upload SRT Files</label>
+                    <input 
+                        type="file" 
+                        id="srtFiles" 
+                        accept=".srt"
+                        multiple
+                        onchange="showFileInfo()"
+                    >
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateCombinedScript()">
+                🐐 Generate Recap 🚐
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>🚐 Generating your Aadu recap... Hold tight! 🐐</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="result" id="result">
+                <h2>🎬 Your Aadu Story 🐐</h2>
+                <pre id="scriptContent"></pre>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>✨ Powered by Gemini AI • Server: <code>localhost:3000</code> ✨</p>
+            <p>🚐 "A Dangerous Animal" - The Legendary Aadu Saga 🐐</p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        function showFileInfo() {
+            const fileInput = document.getElementById('srtFiles');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (fileInput.files.length > 0) {
+                let html = '';
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    html += `<div class="file-item">🚐 ${file.name} (${sizeMB} MB)</div>`;
+                }
+                fileInfo.innerHTML = html;
+                fileInfo.classList.add('show');
+            } else {
+                fileInfo.classList.remove('show');
+            }
+        }
+
+        async function generateCombinedScript() {
+            const movieNames = document.getElementById('movieNames').value.trim();
+            const fileInput = document.getElementById('srtFiles');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            const btn = document.getElementById('generateBtn');
+            const scriptContent = document.getElementById('scriptContent');
+
+            // Validate input
+            if (!movieNames) {
+                showError('Please enter movie names separated by commas');
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select at least one SRT file');
+                return;
+            }
+
+            const movieNamesArray = movieNames.split(',').map(n => n.trim());
+            if (movieNamesArray.length !== fileInput.files.length) {
+                showError(`Number of movie names (${movieNamesArray.length}) must match number of files (${fileInput.files.length})`);
+                return;
+            }
+
+            // Reset UI
+            loading.classList.add('show');
+            error.classList.remove('show');
+            result.classList.remove('show');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('movieNames', movieNames);
+                
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('srtFiles', fileInput.files[i]);
+                }
+
+                const response = await fetch(`${API_URL}/movie/generate-combined-script`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate combined script');
+                }
+
+                // Show result with smooth scroll
+                scriptContent.textContent = data.script;
+                result.classList.add('show');
+                result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ Error: ' + message;
+            error.classList.add('show');
+            error.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    </script>
+</body>
+</html>

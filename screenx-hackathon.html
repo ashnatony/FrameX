@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrameX - AI-Powered Movie Recap Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            color: #e4e4e7;
+        }
+
+        /* Cinematic grid background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(220, 38, 38, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Gradient orbs */
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, 50px) scale(1.1); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.9) 0%, rgba(40, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 20px 20px 0 0;
+            padding: 60px 50px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(220, 38, 38, 0.8) 50%, 
+                transparent 100%);
+        }
+
+        .logo-container {
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-size: 4.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            color: #fca5a5;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            color: #fca5a5;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-top: 16px;
+        }
+
+        .main-content {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.95) 0%, rgba(40, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            padding: 50px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background: rgba(30, 0, 0, 0.6);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            padding: 24px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(220, 38, 38, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
+        }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            color: #e4e4e7;
+            font-weight: 600;
+            font-size: 1em;
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            color: #9ca3af;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .input-section {
+            background: rgba(30, 0, 0, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            padding: 36px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .input-section:hover {
+            border-color: rgba(220, 38, 38, 0.5);
+        }
+
+        .input-group {
+            margin-bottom: 28px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #e4e4e7;
+            font-weight: 600;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: rgba(10, 0, 0, 0.7);
+            color: #e4e4e7;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
+            background: rgba(10, 0, 0, 0.9);
+        }
+
+        input[type="text"]::placeholder {
+            color: #6b7280;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 20px;
+            border: 2px dashed rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(10, 0, 0, 0.6);
+            color: #9ca3af;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        input[type="file"]:hover {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .file-info {
+            margin-top: 16px;
+            padding: 16px;
+            background: rgba(10, 0, 0, 0.7);
+            border-radius: 12px;
+            display: none;
+            border: 1px solid rgba(220, 38, 38, 0.3);
+        }
+
+        .file-info.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .file-item {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.25) 0%, rgba(185, 28, 28, 0.25) 100%);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            color: #e4e4e7;
+            margin: 10px 0;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9em;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
+            font-family: 'Space Grotesk', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .generate-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(220, 38, 38, 0.6);
+        }
+
+        .generate-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 32px 0;
+            padding: 36px;
+            background: rgba(30, 0, 0, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 16px;
+        }
+
+        .loading.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .spinner {
+            border: 4px solid rgba(220, 38, 38, 0.2);
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #fca5a5;
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            display: none;
+            font-weight: 600;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            background: rgba(30, 0, 0, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            padding: 36px;
+            border-radius: 16px;
+            margin-top: 32px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .result h2 {
+            color: #e4e4e7;
+            margin-bottom: 24px;
+            font-size: 1.8em;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(220, 38, 38, 0.4);
+            padding-bottom: 16px;
+        }
+
+        #scriptContent {
+            white-space: pre-wrap;
+            line-height: 1.9;
+            color: #d1d5db;
+            font-size: 16px;
+            background: rgba(10, 0, 0, 0.7);
+            padding: 28px;
+            border-radius: 12px;
+            border-left: 3px solid #dc2626;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        code {
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #fca5a5;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            margin-top: 50px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .footer p {
+            margin: 8px 0;
+        }
+
+        .tech-badge {
+            display: inline-block;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            color: #fca5a5;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::selection {
+            background: rgba(220, 38, 38, 0.3);
+            color: #e4e4e7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">FRAMEX</div>
+                <div class="tagline">AI-Powered Movie Recap Generator</div>
+                <div class="subtitle">Transform movie subtitles into compelling story summaries</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI-Powered</div>
+                    <div class="feature-desc">Leverages Gemini AI for intelligent story analysis</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-title">Fast Processing</div>
+                    <div class="feature-desc">Generate comprehensive recaps in under 2 minutes</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <div class="feature-title">Multi-Movie</div>
+                    <div class="feature-desc">Combine multiple movies into unified narratives</div>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="movieNames">🎥 Movie Names</label>
+                    <input 
+                        type="text" 
+                        id="movieNames" 
+                        placeholder="e.g., Inception (2010), Tenet (2020)" 
+                        autocomplete="off"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="srtFiles">📁 Upload SRT Subtitle Files</label>
+                    <input 
+                        type="file" 
+                        id="srtFiles" 
+                        accept=".srt"
+                        multiple
+                        onchange="showFileInfo()"
+                    >
+                    <div class="file-info" id="fileInfo"></div>
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateCombinedScript()">
+                Generate Recap
+            </button>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your movie recap... Please wait</p>
+            </div>
+
+            <div class="error" id="error"></div>
+
+            <div class="result" id="result">
+                <h2>📖 Generated Movie Recap</h2>
+                <pre id="scriptContent"></pre>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                Powered by 
+                <span class="tech-badge">NestJS</span>
+                <span class="tech-badge">Gemini AI</span>
+                <span class="tech-badge">TypeScript</span>
+            </p>
+            <p style="margin-top: 12px;">Built for Innovation • Server: <code>localhost:3000</code></p>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        function showFileInfo() {
+            const fileInput = document.getElementById('srtFiles');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (fileInput.files.length > 0) {
+                let html = '';
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    html += `<div class="file-item">📄 ${file.name} <span style="opacity: 0.7">(${sizeMB} MB)</span></div>`;
+                }
+                fileInfo.innerHTML = html;
+                fileInfo.classList.add('show');
+            } else {
+                fileInfo.classList.remove('show');
+            }
+        }
+
+        async function generateCombinedScript() {
+            const movieNames = document.getElementById('movieNames').value.trim();
+            const fileInput = document.getElementById('srtFiles');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            const btn = document.getElementById('generateBtn');
+            const scriptContent = document.getElementById('scriptContent');
+
+            if (!movieNames) {
+                showError('Please enter movie names separated by commas');
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select at least one SRT file');
+                return;
+            }
+
+            const movieNamesArray = movieNames.split(',').map(n => n.trim());
+            if (movieNamesArray.length !== fileInput.files.length) {
+                showError(`Number of movie names (${movieNamesArray.length}) must match number of files (${fileInput.files.length})`);
+                return;
+            }
+
+            loading.classList.add('show');
+            error.classList.remove('show');
+            result.classList.remove('show');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('movieNames', movieNames);
+                
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('srtFiles', fileInput.files[i]);
+                }
+
+                const response = await fetch(`${API_URL}/movie/generate-combined-script`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate combined script');
+                }
+
+                scriptContent.textContent = data.script;
+                result.classList.add('show');
+                
+                setTimeout(() => {
+                    result.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ ' + message;
+            error.classList.add('show');
+            error.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>

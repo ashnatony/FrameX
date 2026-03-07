@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScreenX - Upload Multiple SRT Files</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        input[type="file"]:hover {
+            border-color: #667eea;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-item {
+            padding: 8px;
+            background: white;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .result {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        #scriptContent {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #444;
+            font-size: 15px;
+        }
+
+        code {
+            background: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 ScreenX - Combined Summary</h1>
+        <p class="subtitle">Upload multiple SRT files and generate a combined movie summary</p>
+
+        <div class="info">
+            <strong>📝 Instructions:</strong>
+            <br>1. Enter movie names separated by commas (e.g., "Aadu 1, Aadu 2")
+            <br>2. Upload multiple SRT subtitle files (in the same order)
+            <br>3. Click Generate Combined Script
+            <br><br>Server: <code>http://localhost:3000</code>
+        </div>
+
+        <div class="input-group">
+            <label for="movieNames">Movie Names (separated by commas)</label>
+            <input 
+                type="text" 
+                id="movieNames" 
+                placeholder="e.g., Aadu (2015), Aadu 2 (2017)" 
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="input-group">
+            <label for="srtFiles">SRT Subtitle Files (multiple)</label>
+            <input 
+                type="file" 
+                id="srtFiles" 
+                accept=".srt"
+                multiple
+                onchange="showFileInfo()"
+            >
+            <div class="file-info" id="fileInfo"></div>
+        </div>
+
+        <button id="generateBtn" onclick="generateCombinedScript()">
+            ✨ Generate Combined Script
+        </button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating combined script... This may take up to 2 minutes</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h2>Generated Combined Script:</h2>
+            <pre id="scriptContent"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        function showFileInfo() {
+            const fileInput = document.getElementById('srtFiles');
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (fileInput.files.length > 0) {
+                let html = '';
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    html += `<div class="file-item">📁 ${file.name} (${sizeMB} MB)</div>`;
+                }
+                fileInfo.innerHTML = html;
+                fileInfo.classList.add('show');
+            } else {
+                fileInfo.classList.remove('show');
+            }
+        }
+
+        async function generateCombinedScript() {
+            const movieNames = document.getElementById('movieNames').value.trim();
+            const fileInput = document.getElementById('srtFiles');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            const btn = document.getElementById('generateBtn');
+            const scriptContent = document.getElementById('scriptContent');
+
+            // Validate input
+            if (!movieNames) {
+                showError('Please enter movie names separated by commas');
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select at least one SRT file');
+                return;
+            }
+
+            const movieNamesArray = movieNames.split(',').map(n => n.trim());
+            if (movieNamesArray.length !== fileInput.files.length) {
+                showError(`Number of movie names (${movieNamesArray.length}) must match number of files (${fileInput.files.length})`);
+                return;
+            }
+
+            // Reset UI
+            loading.classList.add('show');
+            error.classList.remove('show');
+            result.classList.remove('show');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('movieNames', movieNames);
+                
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('srtFiles', fileInput.files[i]);
+                }
+
+                const response = await fetch(`${API_URL}/movie/generate-combined-script`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate combined script');
+                }
+
+                // Show result
+                scriptContent.textContent = data.script;
+                result.classList.add('show');
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ Error: ' + message;
+            error.classList.add('show');
+        }
+    </script>
+</body>
+</html>
