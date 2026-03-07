@@ -68,4 +68,47 @@ export class MovieService {
       throw error;
     }
   }
+
+  async generateComicStoryboard(movieName: string, srtContent: string): Promise<any> {
+    try {
+      // Step 1: Generate the script first
+      console.log('📝 Generating script from subtitle...');
+      const script = await this.generateScriptFromSubtitle(movieName, srtContent);
+
+      // Step 2: Generate comic scenes from the script
+      console.log('🎨 Creating comic storyboard with 12 scenes...');
+      const comicStoryboard = await this.aiService.generateComicScenes(script, movieName);
+
+      console.log('✨ Comic storyboard generated successfully!');
+      return {
+        script,
+        storyboard: comicStoryboard,
+      };
+    } catch (error) {
+      console.error('❌ Error in generateComicStoryboard:', error.message);
+      throw error;
+    }
+  }
+
+  async generateCombinedComicStoryboard(movieData: Array<{ name: string; content: string }>): Promise<any> {
+    try {
+      // Step 1: Generate the combined script first
+      console.log('📝 Generating combined script from subtitles...');
+      const script = await this.generateCombinedScript(movieData);
+
+      // Step 2: Generate comic scenes from the combined script
+      const combinedMovieName = movieData.map(m => m.name).join(' & ');
+      console.log('🎨 Creating comic storyboard with 12 scenes...');
+      const comicStoryboard = await this.aiService.generateComicScenes(script, combinedMovieName);
+
+      console.log('✨ Comic storyboard generated successfully!');
+      return {
+        script,
+        storyboard: comicStoryboard,
+      };
+    } catch (error) {
+      console.error('❌ Error in generateCombinedComicStoryboard:', error.message);
+      throw error;
+    }
+  }
 }

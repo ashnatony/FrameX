@@ -1,0 +1,15 @@
+
+Testing URL: https://gateway.pixazo.ai/flux-schnell/v1/flux-schnell/generate
+FAILED (https://gateway.pixazo.ai/flux-schnell/v1/flux-schnell/generate): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: https://gateway.pixazo.ai/flux/v1/flux/generate
+FAILED (https://gateway.pixazo.ai/flux/v1/flux/generate): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: https://gateway.pixazo.ai/stable-diffusion/v1/stable-diffusion/generate
+FAILED (https://gateway.pixazo.ai/stable-diffusion/v1/stable-diffusion/generate): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: https://gateway.pixazo.ai/p-video/v1/p-video/generate
+FAILED (https://gateway.pixazo.ai/p-video/v1/p-video/generate): 403 - "The balance is insufficient to proceed with this operation."
+
+Testing URL: https://gateway.pixazo.ai/flux-1-schnell/v1/getDataBatch
+FAILED (https://gateway.pixazo.ai/flux-1-schnell/v1/getDataBatch): undefined - timeout of 5000ms exceeded

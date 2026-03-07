@@ -1,0 +1,12 @@
+
+Testing URL: https://gateway.pixazo.ai/gpt-image-1-5-api-923/v1/gpt-image-1-5-api-request
+FAILED (https://gateway.pixazo.ai/gpt-image-1-5-api-923/v1/gpt-image-1-5-api-request): 403 - "The balance is insufficient to proceed with this operation."
+
+Testing URL: https://gateway.pixazo.ai/flux/v1/flux-request
+FAILED (https://gateway.pixazo.ai/flux/v1/flux-request): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: https://gateway.pixazo.ai/flux-1-schnell/v1/flux-1-schnell-request
+FAILED (https://gateway.pixazo.ai/flux-1-schnell/v1/flux-1-schnell-request): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: https://gateway.pixazo.ai/studio-ghibli-api/v1/studio-ghibli-api-request
+FAILED (https://gateway.pixazo.ai/studio-ghibli-api/v1/studio-ghibli-api-request): 404 - {"statusCode":404,"message":"Resource not found"}

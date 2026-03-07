@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrameX - Comic Storyboard Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+            color: #e4e4e7;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(220, 38, 38, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(220, 38, 38, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.9) 0%, rgba(40, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 4px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            font-family: 'Bangers', cursive;
+        }
+
+        .tagline {
+            font-size: 1.5em;
+            color: #fca5a5;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .subtitle {
+            color: #9ca3af;
+            font-size: 1em;
+        }
+
+        .upload-section {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.95) 0%, rgba(40, 0, 0, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #e4e4e7;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(10, 0, 0, 0.7);
+            color: #e4e4e7;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 20px;
+            border: 2px dashed rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            cursor: pointer;
+            background: rgba(10, 0, 0, 0.6);
+            color: #9ca3af;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]:hover {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(220, 38, 38, 0.6);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(30, 0, 0, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 16px;
+            margin-top: 32px;
+        }
+
+        .loading.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .spinner {
+            border: 4px solid rgba(220, 38, 38, 0.2);
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #fca5a5;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .comic-container {
+            display: none;
+        }
+
+        .comic-container.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        .script-section {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.95) 0%, rgba(40, 0, 0, 0.95) 100%);
+            border: 2px solid rgba(220, 38, 38, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .script-title {
+            font-family: 'Comic Neue', cursive;
+            font-size: 2em;
+            color: #dc2626;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .script-content {
+            color: #d1d5db;
+            line-height: 1.8;
+            font-size: 1.05em;
+            white-space: pre-wrap;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #dc2626;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .script-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .script-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .script-content::-webkit-scrollbar-thumb {
+            background: #dc2626;
+            border-radius: 4px;
+        }
+
+        .comic-header {
+            background: linear-gradient(135deg, rgba(20, 0, 0, 0.95) 0%, rgba(40, 0, 0, 0.95) 100%);
+            border: 2px solid #dc2626;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .comic-title {
+            font-family: 'Bangers', cursive;
+            font-size: 3em;
+            color: #dc2626;
+            text-shadow: 3px 3px 0 #000, -1px -1px 0 #fff;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .comic-grid {
+            display: grid;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .comic-frame {
+            background: rgba(20, 0, 0, 0.95);
+            border: 4px solid #dc2626;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 8px 32px rgba(220, 38, 38, 0.3);
+        }
+
+        .frame-number {
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            background: #dc2626;
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1.5em;
+            padding: 8px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .scenes-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .scene-panel {
+            background: rgba(40, 0, 0, 0.6);
+            border: 3px solid rgba(220, 38, 38, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .scene-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid rgba(220, 38, 38, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .scene-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .image-placeholder {
+            padding: 40px;
+            text-align: center;
+            color: #9ca3af;
+            font-size: 1.1em;
+        }
+
+        .scene-number {
+            background: #b91c1c;
+            color: white;
+            font-family: 'Bangers', cursive;
+            font-size: 1.2em;
+            padding: 5px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .scene-title {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.4em;
+            color: #fca5a5;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .scene-description {
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+        }
+
+        .scene-dialogue {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Comic Neue', cursive;
+            color: #fca5a5;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .scene-mood {
+            display: inline-block;
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.4);
+            color: #fca5a5;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .visual-elements {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .visual-tag {
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            color: #f87171;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.8em;
+        }
+
+        @media (max-width: 768px) {
+            .scenes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2.5em;
+            }
+            
+            .comic-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎬 FRAMEX</div>
+            <div class="tagline">Comic Storyboard Generator</div>
+            <div class="subtitle">Transform movie subtitles into 12-scene comic storyboards</div>
+        </div>
+
+        <div class="upload-section">
+            <div class="input-group">
+                <label for="movieNames">🎥 Movie Names</label>
+                <input 
+                    type="text" 
+                    id="movieNames" 
+                    placeholder="e.g., Inception (2010), Tenet (2020)" 
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="input-group">
+                <label for="srtFiles">📁 Upload SRT Subtitle Files</label>
+                <input 
+                    type="file" 
+                    id="srtFiles" 
+                    accept=".srt"
+                    multiple
+                >
+            </div>
+
+            <button class="generate-btn" id="generateBtn" onclick="generateComicStoryboard()">
+                🎨 Generate Comic Storyboard
+            </button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Creating your comic storyboard with sketch images... This may take 3-5 minutes</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">Generating 12 storyboard sketches using Imagen AI...</p>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="comic-container" id="comicContainer">
+            <div class="comic-header">
+                <div class="comic-title" id="comicTitle"></div>
+                <p style="color: #9ca3af; font-size: 1.1em; font-family: 'Comic Neue', cursive;">
+                    A 12-Scene Comic Storyboard
+                </p>
+            </div>
+            <div class="comic-grid" id="comicGrid"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+
+        async function generateComicStoryboard() {
+            const movieNames = document.getElementById('movieNames').value.trim();
+            const fileInput = document.getElementById('srtFiles');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const comicContainer = document.getElementById('comicContainer');
+            const btn = document.getElementById('generateBtn');
+
+            if (!movieNames) {
+                showError('Please enter movie names');
+                return;
+            }
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError('Please select at least one SRT file');
+                return;
+            }
+
+            loading.classList.add('show');
+            error.classList.remove('show');
+            comicContainer.classList.remove('show');
+            btn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('movieNames', movieNames);
+                
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('srtFiles', fileInput.files[i]);
+                }
+
+                const endpoint = fileInput.files.length > 1 
+                    ? '/movie/generate-combined-comic-storyboard'
+                    : '/movie/generate-comic-storyboard';
+
+                if (fileInput.files.length === 1) {
+                    formData.delete('srtFiles');
+                    formData.append('srtFile', fileInput.files[0]);
+                    formData.delete('movieNames');
+                    formData.append('movieName', movieNames);
+                }
+
+                const response = await fetch(`${API_URL}${endpoint}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate comic storyboard');
+                }
+
+                displayComicStoryboard(data);
+                
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                loading.classList.remove('show');
+                btn.disabled = false;
+            }
+        }
+
+        function displayComicStoryboard(data) {
+            const comicTitle = document.getElementById('comicTitle');
+            const comicGrid = document.getElementById('comicGrid');
+            const comicContainer = document.getElementById('comicContainer');
+
+            comicTitle.textContent = data.movieName || data.movies.join(' & ');
+            comicGrid.innerHTML = '';
+
+            // Display the script first
+            if (data.script) {
+                const scriptSection = document.createElement('div');
+                scriptSection.className = 'script-section';
+                scriptSection.innerHTML = `
+                    <div class="script-title">📖 Complete Story Script</div>
+                    <div class="script-content">${data.script}</div>
+                `;
+                comicGrid.appendChild(scriptSection);
+            }
+
+            const storyboard = data.storyboard;
+            
+            storyboard.frames.forEach(frame => {
+                const frameDiv = document.createElement('div');
+                frameDiv.className = 'comic-frame';
+                
+                frameDiv.innerHTML = `
+                    <div class="frame-number">Frame ${frame.frameNumber}</div>
+                    <div class="scenes-container">
+                        ${createScenePanel(frame.scene1)}
+                        ${createScenePanel(frame.scene2)}
+                    </div>
+                `;
+                
+                comicGrid.appendChild(frameDiv);
+            });
+
+            comicContainer.classList.add('show');
+            setTimeout(() => {
+                comicContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function createScenePanel(scene) {
+            const visualElementsHTML = scene.visualElements
+                ? scene.visualElements.map(el => `<span class="visual-tag">${el}</span>`).join('')
+                : '';
+
+            // Handle Pixazo image URL or show placeholder
+            const imageHTML = scene.imageUrl 
+                ? `<div class="scene-image"><img src="${scene.imageUrl}" alt="Scene ${scene.sceneNumber} storyboard sketch" loading="lazy"></div>`
+                : scene.imageError
+                ? `<div class="scene-image"><div class="image-placeholder">❌ Image failed: ${scene.imageError}</div></div>`
+                : `<div class="scene-image"><div class="image-placeholder">🎨 No image generated</div></div>`;
+
+            return `
+                <div class="scene-panel">
+                    ${imageHTML}
+                    <div class="scene-number">Scene ${scene.sceneNumber}</div>
+                    <div class="scene-title">${scene.title}</div>
+                    <div class="scene-description">${scene.description}</div>
+                    <div class="scene-dialogue">"${scene.dialogue}"</div>
+                    <div class="scene-mood">📽️ ${scene.mood}</div>
+                    ${visualElementsHTML ? `<div class="visual-elements">${visualElementsHTML}</div>` : ''}
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = '❌ ' + message;
+            error.classList.add('show');
+            error.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+</body>
+</html>

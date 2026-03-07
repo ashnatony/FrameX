@@ -1,0 +1,12 @@
+
+Testing URL: GET https://gateway.pixazo.ai/p-video/v1/p-video/12gkggc805rmw0cwmg9skrgcb8
+FAILED (https://gateway.pixazo.ai/p-video/v1/p-video/12gkggc805rmw0cwmg9skrgcb8): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: GET https://gateway.pixazo.ai/p-video/v1/p-video/status/12gkggc805rmw0cwmg9skrgcb8
+FAILED (https://gateway.pixazo.ai/p-video/v1/p-video/status/12gkggc805rmw0cwmg9skrgcb8): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: POST https://gateway.pixazo.ai/p-video/v1/p-video/status
+FAILED (https://gateway.pixazo.ai/p-video/v1/p-video/status): 404 - {"statusCode":404,"message":"Resource not found"}
+
+Testing URL: GET https://gateway.pixazo.ai/p-video/v1/p-video/generate/12gkggc805rmw0cwmg9skrgcb8
+FAILED (https://gateway.pixazo.ai/p-video/v1/p-video/generate/12gkggc805rmw0cwmg9skrgcb8): 404 - {"statusCode":404,"message":"Resource not found"}
