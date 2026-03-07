@@ -170,6 +170,13 @@ Your task:
    - The emotional tone/mood of the scene
    - Key visual elements (characters, setting, actions)
 
+CRITICAL INSTRUCTION FOR VISUAL LIKENESS: 
+You must identify the actual real-world actors who played these characters in the movie: "${movieName}". 
+DO NOT just use their name in the visual "description". Image generators often fail with just names.
+Instead, you MUST explicitly describe their EXACT physical facial features, body type, and iconic costume from the movie in every single scene description.
+EXAMPLE AND STRICT REQUIREMENT: For the character "Shaji Pappan", you MUST describe him as "Indian Malayalam actor Jayasurya, man with a thick handlebar mustache, wearing a black shirt, a red mundu, and black aviator sunglasses."
+Apply this level of intense physical and costume description to ALL characters instead of just using their names.
+
 Format your response as a JSON array with this structure:
 [
   {
@@ -186,8 +193,10 @@ Format your response as a JSON array with this structure:
 Make sure:
 - Each scene is visually distinct and captures a key story moment
 - Scenes flow chronologically from beginning to end
+- Descriptions use REAL ACTOR NAMES for character likeness 
 - Descriptions are vivid and specific for creating comic panels
 - The 12 scenes together tell the complete story arc
+- CRITICAL: Ensure your output is STRICTLY valid JSON. Do NOT use unescaped double quotes inside the string values. Use single quotes instead of double quotes inside descriptions.
 
 Return ONLY the JSON array, no additional text.`;
 
@@ -213,7 +222,7 @@ Return ONLY the JSON array, no additional text.`;
       }));
 
       // Generate all images using Pixazo batch processing
-      const imageResults = await this.pixazoService.generateMultipleSketchImages(sceneDescriptions);
+      const imageResults = await this.pixazoService.generateMultipleComicImages(sceneDescriptions);
 
       // Map images back to scenes
       const scenesWithImages = scenes.map(scene => {
