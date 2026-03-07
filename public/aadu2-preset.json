@@ -1,0 +1,98 @@
+[
+  {
+    "sceneNumber": 1,
+    "title": "Aadu 2: The Return - Placeholder",
+    "description": "A high-octane opening scene in the Kerala high ranges. Shaji Pappan and his team are seen celebrating after their many adventures. The background shows lush green hills and a comic title card reading 'AADU 2'. Shaji Pappan is leading the group with his signature style.",
+    "dialogue": "Aadu 2 begins here!",
+    "mood": "Energetic, cinematic start",
+    "visualElements": ["Kerala hills", "Aadu 2 title", "Shaji Pappan team"]
+  },
+  {
+    "sceneNumber": 2,
+    "title": "New Conflict - Placeholder",
+    "description": "Shaji Pappan and Arakkal Abu are in deep discussion in the village market. There is a new mystery brewing. People in the background are whispering. Arakkal Abu looks worried while Shaji remains confident.",
+    "dialogue": "Something is different this time, Shajiyetta.",
+    "mood": "Tense, investigative",
+    "visualElements": ["Village market", "Shaji Pappan", "Arakkal Abu"]
+  },
+  {
+    "sceneNumber": 3,
+    "title": "Pinky's Return - Placeholder",
+    "description": "Pinky, the small white hornless goat, is seen happily munching on some grass. Shaji Pappan approaches her with affection. The sun is setting, creating a warm comic glow.",
+    "dialogue": "Pinky is safe with us.",
+    "mood": "Warm, peaceful",
+    "visualElements": ["Pinky the goat", "Shaji Pappan", "Sunset"]
+  },
+  {
+    "sceneNumber": 4,
+    "title": "The Antagonist Appears - Placeholder",
+    "description": "A dark, mysterious figure is seen watching the group from a distance. The shadows are long and dramatic. This person seems to have a grudge against Shaji Pappan's team.",
+    "dialogue": "They have no idea what's coming.",
+    "mood": "Menacing, dark",
+    "visualElements": ["Shadowy figure", "Drama", "Distance"]
+  },
+  {
+    "sceneNumber": 5,
+    "title": "Planning the Mission - Placeholder",
+    "description": "Shaji and the gang (Cleetus, Sarbath Shameer, Sasi) are huddled around a map. They are planning their next big move. The lighting is focused and intense.",
+    "dialogue": "This is the plan.",
+    "mood": "Determined, focused",
+    "visualElements": ["Map", "Gang", "Focused lighting"]
+  },
+  {
+    "sceneNumber": 6,
+    "title": "The Chase Begins - Placeholder",
+    "description": "A fast-paced chase sequence through the narrow roads of Kerala. The white van is back and driving at high speeds to evade someone. Dust is flying everywhere.",
+    "dialogue": "Speed up! They're gaining on us!",
+    "mood": "Action-packed, frantic",
+    "visualElements": ["White van", "Dust", "Chase"]
+  },
+  {
+    "sceneNumber": 7,
+    "title": "Humorous Setback - Placeholder",
+    "description": "A classic Aadu-style comedic moment. Shaji Pappan encounters an unexpected obstacle that leads to a funny tumble. His friends are reacting with a mix of help and laughter.",
+    "dialogue": "Not again!",
+    "mood": "Funny, slapstick",
+    "visualElements": ["Shaji tumble", "Friends reacting"]
+  },
+  {
+    "sceneNumber": 8,
+    "title": "Confronting Dude - Placeholder",
+    "description": "Shaji Pappan comes face to face with 'Dude' again. They are in a dramatic standoff. The background is a dusty construction site or warehouse.",
+    "dialogue": "We meet again, Dude.",
+    "mood": "Dramatic standoff",
+    "visualElements": ["Shaji Pappan", "Dude", "Industrial background"]
+  },
+  {
+    "sceneNumber": 9,
+    "title": "The Twist - Placeholder",
+    "description": "A major revelation occurs. Everyone is shocked. Shaji Pappan's expression is one of total disbelief as he realizes the truth about their quest.",
+    "dialogue": "So it was you all along?",
+    "mood": "Shocked, revelatory",
+    "visualElements": ["Realization", "Shocked faces"]
+  },
+  {
+    "sceneNumber": 10,
+    "title": "Prepare for the Final Battle - Placeholder",
+    "description": "The team gears up for one last stand. They are putting on their iconic outfits and checking their gear. The energy is high and heroic.",
+    "dialogue": "Let's finish this.",
+    "mood": "Heroic, prepared",
+    "visualElements": ["Gearing up", "Heroic poses"]
+  },
+  {
+    "sceneNumber": 11,
+    "title": "The Grand Finale Brawl - Placeholder",
+    "description": "A massive fight scene involving all the characters. It's chaotic but choreographed in a comic-book style with 'POW' and 'WHAM' text effects. Shaji is in his prime.",
+    "dialogue": "Tired yet?",
+    "mood": "Action, climactic",
+    "visualElements": ["Brawl", "Action text effects", "Chaos"]
+  },
+  {
+    "sceneNumber": 12,
+    "title": "Success and Celebration - Placeholder",
+    "description": "The mission is accomplished. Shaji Pappan and the gang are celebrating their victory. Pinky the goat is with them, and the final panel shows a sunset and 'THE END?' teaser.",
+    "dialogue": "We did it! — For now...",
+    "mood": "Celebratory, happy ending",
+    "visualElements": ["Victory celebration", "Pinky", "The End teaser"]
+  }
+]

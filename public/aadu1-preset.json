@@ -1,0 +1,98 @@
+[
+  {
+    "sceneNumber": 1,
+    "title": "The Journey Begins",
+    "description": "A stylized comic world map viewed from above, Bangkok marked with a red pin, a small cartoon airplane with a dotted travel path arcing across the ocean heading toward India. The route curves across water and land illustrated in comic style, ending at a green hill region labeled 'Kerala – High Range' with lush mountains and tea plantations.",
+    "dialogue": "Oru sahayam cheythu tharanam...",
+    "mood": "Mysterious, adventurous intro",
+    "visualElements": ["world map", "airplane icon", "dotted route", "Bangkok to Kerala", "tea plantations"]
+  },
+  {
+    "sceneNumber": 2,
+    "title": "Shaji Pappan — The Hero",
+    "description": "A crowded rural Kerala festival ground with villagers cheering during a tug-of-war competition, colorful festival banners, dust rising in the air. Center frame: Shaji Pappan, a stocky Indian man in his 30s with warm medium-brown skin, a very thick black handlebar mustache, wearing a white lungi and shirt, standing confidently with a mischievous grin. A large title card reads 'SHAJI PAPPAN' behind him in bold comic-book lettering.",
+    "dialogue": "Njaan undaayirunne aadum!",
+    "mood": "Confident, comedic hero introduction",
+    "visualElements": ["festival ground", "tug-of-war rope", "cheering crowd", "Shaji Pappan", "hero title card"]
+  },
+  {
+    "sceneNumber": 3,
+    "title": "The Banana Peel Disaster",
+    "description": "Close-up of a yellow banana peel lying on dusty ground right under Shaji Pappan's foot as he strides toward the tug-of-war rope. Next instant: Shaji slipping dramatically, legs flying upward into the air, face frozen in shock, teammates reeling backward, village crowd erupting in laughter. Bold comic action lines and 'SLIPPPP!' text effect across the panel.",
+    "dialogue": "Ayyo... NOOOO!",
+    "mood": "Slapstick comedy, chaos",
+    "visualElements": ["banana peel", "Shaji slipping", "legs in air", "shocked teammates", "laughing crowd", "action lines"]
+  },
+  {
+    "sceneNumber": 4,
+    "title": "Sick in Bed — Wife Leaves",
+    "description": "Interior of a traditional Kerala village house with wooden furniture and herbal medicine bottles. Shaji Pappan lying weakly on a traditional wooden cot with a blanket over him, an Ayurvedic doctor holding herbal paste. His wife stands at the doorway with a packed travel bag, fierce angry expression, pointing her finger directly at Shaji.",
+    "dialogue": "Ponnappachettan enne ponn pole nookkum... Cherinja komban nthina Shajiyetta nettipattam?",
+    "mood": "Comedic domestic tension, Shaji helpless",
+    "visualElements": ["village house interior", "wooden cot", "herbal medicine", "angry wife", "travel bag", "doctor"]
+  },
+  {
+    "sceneNumber": 5,
+    "title": "The Prize — A White Goat!",
+    "description": "Prize reveal at the festival: a village committee member with a microphone announces the tug-of-war prize. Presented dramatically on a decorated platform is a small, completely white domestic goat with no horns whatsoever, soft fluffy white fur, small dark hooves, and gentle brown eyes, tied with a bright ribbon. Shaji and his teammates stare in shocked disbelief. One teammate cups his hands to shout in realization.",
+    "dialogue": "Adutha varsham moori kuttan! — Ith penn aad aanallo!",
+    "mood": "Surprised, comedic shock",
+    "visualElements": ["committee microphone", "Pinky the white hornless goat", "prize ribbon", "shocked team", "festival stage"]
+  },
+  {
+    "sceneNumber": 6,
+    "title": "The Van & The Police Checkpoint",
+    "description": "An old battered white van driving through a narrow village road at night, Pinky the white hornless goat visible through the back window. Police standing on the roadside wave the van down for a drunk-driving check. Inside, Arakkal Abu, a tall dark-skinned man with a shaved head and rough features wearing a sleeveless shirt, whispers urgently to Shaji Pappan.",
+    "dialogue": "Ee aattkaatam thinno Shajiyetta... Aattkaatam chavacha kallinte manam kittilla.",
+    "mood": "Tense, suspenseful comedy",
+    "visualElements": ["old white van", "Pinky the goat", "police checkpoint", "night road", "whispered conversation"]
+  },
+  {
+    "sceneNumber": 7,
+    "title": "Police Station Chaos — Bermuda Shorts!",
+    "description": "Police station exterior, a jeep arrives in a cloud of dust. Comedy reveal inside: Shaji Pappan and all his friends stand in colourful patterned bermuda shorts only, no shirts, looking deeply embarrassed. The police officers stare wide-eyed in absolute shock and confusion. Pinky the white hornless goat is also present on a leash.",
+    "dialogue": "Ennathada ith mazhavillo?",
+    "mood": "Pure slapstick comedy",
+    "visualElements": ["police station", "colorful bermudas", "shirtless men", "shocked police", "Pinky the goat", "dust cloud"]
+  },
+  {
+    "sceneNumber": 8,
+    "title": "The Bangkok Gang Arrives",
+    "description": "A stylish, dramatic comic panel introducing the Bangkok gang. Leading them is 'Dude' — Sunny Wayne, a slim young Indian man with short styled hair, wearing sunglasses, a casual jacket and jeans, pointing finger-guns coolly. Behind him stand other gang members including Saatan Xavier, an intimidating older man with a thick build, graying temples, dark kurta, and a menacing expression.",
+    "dialogue": "Call me dude... ntha thante peer? — I am from underworld... dollar enik preshnamilla...",
+    "mood": "Dramatic villain introduction, over-the-top swagger",
+    "visualElements": ["Dude with sunglasses", "Bangkok gang", "Saatan Xavier", "dramatic villain pose", "underworld theme"]
+  },
+  {
+    "sceneNumber": 9,
+    "title": "The Mysterious Saviour & Neela Koduveli",
+    "description": "A mystical entry: smoke and dramatic lighting as a robed mysterious figure enters. The crowd reacts with awe and confusion. The Saviour dramatically explains the legend of the Neela Koduveli — a rare magical plant. People crowd around in a mix of disbelief and fascination, comic aura lines radiate from the Saviour.",
+    "dialogue": "Ith aaano ninte gajaraja muth? — Neela Koduveli... ith kandavarku sarva kelvi kittum!",
+    "mood": "Mystical, absurd comedy",
+    "visualElements": ["mysterious saviour", "dramatic smoke", "crowd in awe", "Neela Koduveli plant", "comic aura lines"]
+  },
+  {
+    "sceneNumber": 10,
+    "title": "Stealing the Box",
+    "description": "A frantic multi-panel sequence: a random thief grabs the mystery box and sprints away. Another thief snatches it from him mid-run. Then the first thief grabs it back. All three tumble over each other. A phone rings and someone panics. The box passes between hands like a hot potato against a chaotic Kerala street background.",
+    "dialogue": "Nammade Koduveli aaro kidnap cheythond poyi...",
+    "mood": "Frantic slapstick, fast-paced chaos",
+    "visualElements": ["mystery box", "chain of thieves", "mid-run snatch", "phone call panic", "Kerala street background"]
+  },
+  {
+    "sceneNumber": 11,
+    "title": "The Great Fight & Box Reveal",
+    "description": "A massive brawl: Shaji Pappan, the police, and the Bangkok gang all fighting in one giant chaotic frame. Shaji exhausted in the center. Police finally grab the mystery box and open it dramatically. Inside: cowdung. The officers stare at each other, one furious, one delivering the deadpan punchline. Background: a flashback panel shows the original Neela Koduveli plant being quietly swapped.",
+    "dialogue": "Ith chaanagham alle? — Yes sir... chaanagham. — You idiot! You are suspended!",
+    "mood": "Climactic action comedy, shocking twist",
+    "visualElements": ["three-way brawl", "police opening box", "cowdung reveal", "shocked faces", "flashback panel", "plant swap"]
+  },
+  {
+    "sceneNumber": 12,
+    "title": "The Final Chase — Shaji vs Goat vs Everybody",
+    "description": "The wildly chaotic finale spread: Pinky the white hornless goat has eaten the real Neela Koduveli plant and is running loose. Shaji Pappan sprints desperately after Pinky with arms outstretched. Police chase Shaji. Bangkok gang members run in every direction. A thief falls screaming into a pit. Everyone is running, shouting, falling — total Kerala comedy mayhem. Final caption box at bottom of frame.",
+    "dialogue": "Thinnalede... ente Koduveli!",
+    "mood": "Absolutely chaotic comedy finale",
+    "visualElements": ["Pinky eating plant and running", "Shaji chasing goat", "police chasing everyone", "pit fall", "total chaos", "finale caption"]
+  }
+]

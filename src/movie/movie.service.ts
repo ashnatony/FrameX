@@ -1,6 +1,14 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { AiService } from '../ai/ai.service';
 import { parseSRT } from '../utils/srt-parser';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export interface CharacterImageData {
+  name: string;
+  buffer: Buffer;
+  mimeType: string;
+}
 
 @Injectable()
 export class MovieService {
@@ -10,7 +18,6 @@ export class MovieService {
 
   async generateScriptFromSubtitle(movieName: string, srtContent: string): Promise<string> {
     try {
-      // Step 1: Parse SRT content
       console.log('📝 Parsing subtitle...');
       const transcript = parseSRT(srtContent);
       
@@ -22,8 +29,6 @@ export class MovieService {
       }
 
       console.log(`✅ Extracted ${transcript.length} characters of transcript`);
-
-      // Step 2: Generate script using Gemini AI
       console.log('🤖 Generating script with Gemini AI...');
       const script = await this.aiService.generateScript(transcript, movieName);
 
@@ -50,14 +55,9 @@ export class MovieService {
         }
 
         console.log(`✅ ${movie.name}: Extracted ${transcript.length} characters`);
-        
-        return {
-          name: movie.name,
-          transcript,
-        };
+        return { name: movie.name, transcript };
       });
 
-      // Step 2: Generate combined script using Gemini AI
       console.log('🤖 Generating combined script with Gemini AI...');
       const script = await this.aiService.generateCombinedScript(moviesWithTranscripts);
 
@@ -69,45 +69,60 @@ export class MovieService {
     }
   }
 
-  async generateComicStoryboard(movieName: string, srtContent: string): Promise<any> {
+  async generateComicStoryboard(movieName: string, srtContent: string, characterImages?: CharacterImageData[]): Promise<any> {
     try {
-      // Step 1: Generate the script first
       console.log('📝 Generating script from subtitle...');
       const script = await this.generateScriptFromSubtitle(movieName, srtContent);
 
-      // Step 2: Generate comic scenes from the script
       console.log('🎨 Creating comic storyboard with 12 scenes...');
-      const comicStoryboard = await this.aiService.generateComicScenes(script, movieName);
+      const comicStoryboard = await this.aiService.generateComicScenes(script, movieName, characterImages);
 
       console.log('✨ Comic storyboard generated successfully!');
-      return {
-        script,
-        storyboard: comicStoryboard,
-      };
+      return { script, storyboard: comicStoryboard };
     } catch (error) {
       console.error('❌ Error in generateComicStoryboard:', error.message);
       throw error;
     }
   }
 
-  async generateCombinedComicStoryboard(movieData: Array<{ name: string; content: string }>): Promise<any> {
+  async generateCombinedComicStoryboard(movieData: Array<{ name: string; content: string }>, characterImages?: CharacterImageData[]): Promise<any> {
     try {
-      // Step 1: Generate the combined script first
       console.log('📝 Generating combined script from subtitles...');
       const script = await this.generateCombinedScript(movieData);
 
-      // Step 2: Generate comic scenes from the combined script
-      const combinedMovieName = movieData.map(m => m.name).join(' & ');
+      const combinedMovieName = (movieData && Array.isArray(movieData)) 
+        ? movieData.map(m => m.name || 'Unknown Movie').join(' & ') 
+        : 'Combined Storyboard';
       console.log('🎨 Creating comic storyboard with 12 scenes...');
-      const comicStoryboard = await this.aiService.generateComicScenes(script, combinedMovieName);
+      const comicStoryboard = await this.aiService.generateComicScenes(script, combinedMovieName, characterImages);
 
       console.log('✨ Comic storyboard generated successfully!');
-      return {
-        script,
-        storyboard: comicStoryboard,
-      };
+      return { script, storyboard: comicStoryboard };
     } catch (error) {
       console.error('❌ Error in generateCombinedComicStoryboard:', error.message);
+      throw error;
+    }
+  }
+
+  async generatePresetComicStoryboard(presetKey: string, characterImages?: CharacterImageData[]): Promise<any> {
+    try {
+      console.log(`📂 Loading preset storyboard: ${presetKey}...`);
+      
+      const presetPath = path.join(process.cwd(), 'public', `${presetKey}.json`);
+      if (!fs.existsSync(presetPath)) {
+        throw new HttpException(`Preset ${presetKey} not found`, HttpStatus.NOT_FOUND);
+      }
+
+      const presetData = JSON.parse(fs.readFileSync(presetPath, 'utf8'));
+      const movieName = presetKey.replace('-', ' ').toUpperCase(); // Simple name formatting
+
+      console.log('🎨 Creating comic storyboard from preset scenes...');
+      const comicStoryboard = await this.aiService.generateComicFromScenes(presetData, movieName, characterImages);
+
+      console.log('✨ Preset comic storyboard generated successfully!');
+      return { script: 'Using preset Aadu 1 storyboard script provided by user.', storyboard: comicStoryboard };
+    } catch (error) {
+      console.error('❌ Error in generatePresetComicStoryboard:', error.message);
       throw error;
     }
   }

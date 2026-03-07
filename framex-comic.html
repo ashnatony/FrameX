@@ -442,6 +442,76 @@
                 font-size: 2em;
             }
         }
+
+        /* ---- Character Reference Upload Styles ---- */
+        .char-ref-section {
+            margin-top: 30px;
+            border-top: 1px solid rgba(220, 38, 38, 0.25);
+            padding-top: 28px;
+        }
+        .char-ref-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .char-ref-header label { margin: 0; }
+        .add-char-btn {
+            background: rgba(220, 38, 38, 0.2);
+            border: 1px solid rgba(220, 38, 38, 0.5);
+            color: #f87171;
+            padding: 8px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .add-char-btn:hover { background: rgba(220, 38, 38, 0.35); }
+        .char-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+            background: rgba(10, 0, 0, 0.4);
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+        .char-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid rgba(220,38,38,0.4);
+            display: none;
+        }
+        .char-row input[type="text"] { margin: 0; padding: 10px 14px; }
+        .char-row input[type="file"] { padding: 10px; }
+        .remove-char-btn {
+            background: transparent;
+            border: 1px solid rgba(220,38,38,0.3);
+            color: #f87171;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.2s;
+        }
+        .remove-char-btn:hover { background: rgba(220,38,38,0.2); }
+        .optional-badge {
+            display: inline-block;
+            font-size: 0.75em;
+            background: rgba(220,38,38,0.15);
+            border: 1px solid rgba(220,38,38,0.3);
+            color: #f87171;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -453,14 +523,26 @@
         </div>
 
         <div class="upload-section">
-            <div class="input-group">
-                <label for="movieNames">🎥 Movie Names</label>
-                <input 
-                    type="text" 
-                    id="movieNames" 
-                    placeholder="e.g., Inception (2010), Tenet (2020)" 
-                    autocomplete="off"
-                >
+                <div style="flex: 1;">
+                    <label for="movieNames">🎥 Movie Name & Script Status</label>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                        <input 
+                            type="text" 
+                            id="movieNames" 
+                            value="Aadu 1 - Oru Bheekara Jeeviyaan"
+                            placeholder="e.g., Inception" 
+                            style="flex: 1;"
+                        >
+                        <span id="scriptBadge" class="optional-badge" style="background: #dc2626; color: white; padding: 10px 15px; margin: 0; font-size: 0.85em; display: inline-flex; align-items: center; gap: 5px;">
+                            🔒 Script Locked: Aadu 1
+                        </span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="add-char-btn" style="height: 52px; padding: 0 15px;" onclick="loadAadu1Preset()" title="Load Aadu 1 Script">🎬 Aadu 1</button>
+                    <button class="add-char-btn" style="height: 52px; padding: 0 15px; background: rgba(220, 38, 38, 0.1); border-color: rgba(220, 38, 38, 0.3);" onclick="loadAadu2Preset()" title="Coming Soon: Aadu 2 Script">🎬 Aadu 2</button>
+                    <button class="remove-char-btn" style="height: 52px; padding: 0 15px; border-color: #6b7280; color: #9ca3af;" onclick="resetToNormalMode()" title="Reset to normal SRT mode">🔄 Reset</button>
+                </div>
             </div>
 
             <div class="input-group">
@@ -473,6 +555,17 @@
                 >
             </div>
 
+            <div class="char-ref-section">
+                <div class="char-ref-header">
+                    <label>🎭 Character Reference Images <span class="optional-badge">Upload actor photos to improve likeness</span></label>
+                    <button type="button" class="add-char-btn" onclick="addCharacterRow()">+ Custom Character</button>
+                </div>
+                <p style="color:#6b7280; font-size:0.88em; margin-bottom:14px;">
+                    Upload a clear photo of each actor to help the AI draw them accurately. Gemini Vision will analyze the photo and describe their appearance to the image generator.
+                </p>
+                <div id="characterRows"></div>
+            </div>
+
             <button class="generate-btn" id="generateBtn" onclick="generateComicStoryboard()">
                 🎨 Generate Comic Storyboard
             </button>
@@ -480,8 +573,8 @@
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Creating your comic storyboard with sketch images... This may take 3-5 minutes</p>
-            <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">Generating 12 storyboard sketches using Imagen AI...</p>
+            <p>Creating your comic storyboard... This may take 4-6 minutes</p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #9ca3af;">Step 1: Analyzing character reference photos with Gemini Vision → Step 2: Generating 12 comic panels via Pixazo AI</p>
         </div>
 
         <div class="error" id="error"></div>
@@ -498,7 +591,120 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000';
+        const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? `${window.location.protocol}//${window.location.host}`
+            : 'http://localhost:3000';
+
+        console.log('🚀 FrameX Client Configured:', { API_URL, origin: window.location.origin });
+
+        // Immediate diagnostic connectivity test
+        fetch(`${API_URL}/movie/test`).then(r => {
+            console.log('✅ Server Connectivity OK');
+        }).catch(err => {
+            console.error('❌ Server Unreachable:', API_URL, err);
+        });
+
+        let charRowCount = 0;
+
+        const AADU_CHARACTERS = [
+            { name: 'Shaji Pappan',    hint: 'Jayasurya' },
+            { name: 'Abu',             hint: 'Vinayakan' },
+            { name: 'V P Sasi',        hint: 'Joy Mathew' },
+            { name: 'Sarbath Shameer', hint: 'Manikandan Achari' },
+            { name: 'Dude',            hint: 'Sunny Wayne' },
+            { name: 'Pinky',           hint: 'White goat, no horns (no photo needed)' },
+            { name: 'Cleetus',         hint: 'Chemban Vinod Jose' },
+            { name: 'Saatan Xavier',   hint: 'Vijayaraghavan' },
+        ];
+
+        let activePreset = 'aadu1-preset';
+
+        function loadAadu1Preset() {
+            document.getElementById('movieNames').value = 'Aadu 1 - Oru Bheekara Jeeviyaan';
+            activePreset = 'aadu1-preset';
+            document.getElementById('scriptBadge').style.display = 'inline-flex';
+            document.getElementById('scriptBadge').textContent = '🔒 Script Locked: Aadu 1';
+            
+            // Clear current rows and re-init with Aadu characters
+            const container = document.getElementById('characterRows');
+            container.innerHTML = '';
+            charRowCount = 0;
+            initAaduCharacterRows();
+        }
+
+        function loadAadu2Preset() {
+            document.getElementById('movieNames').value = 'Aadu 2';
+            activePreset = 'aadu2-preset';
+            document.getElementById('scriptBadge').style.display = 'inline-flex';
+            document.getElementById('scriptBadge').textContent = '🔒 Script Locked: Aadu 2';
+            
+            // Note: Users of this project will need the aadu2-preset.json file
+            alert('Aadu 2 Preset Mode Active! \n\nWaiting for Aadu 2 manual script data. \n(Note: I will create the aadu2-preset.json once you provide the scenes!)');
+        }
+
+        function resetToNormalMode() {
+            activePreset = null;
+            document.getElementById('movieNames').value = '';
+            document.getElementById('scriptBadge').style.display = 'none';
+            alert('Switched to Normal mode. Uploaded SRT files will now be used to generate the script.');
+        }
+
+        function initAaduCharacterRows() {
+            AADU_CHARACTERS.forEach(char => {
+                charRowCount++;
+                const id = charRowCount;
+                const row = document.createElement('div');
+                row.className = 'char-row';
+                row.id = `charRow-${id}`;
+                row.innerHTML = `
+                    <input type="text" placeholder="Character name" id="charName-${id}" value="${char.name}">
+                    <div>
+                        <input type="file" accept="image/*" id="charImage-${id}" onchange="previewChar(${id})" placeholder="Upload photo of ${char.hint}">
+                        <small style="color:#6b7280; font-size:0.8em; margin-top:4px; display:block">Actor: ${char.hint}</small>
+                        <img id="charPreview-${id}" class="char-preview" alt="preview">
+                    </div>
+                    <button class="remove-char-btn" onclick="removeCharRow(${id})">✕</button>
+                `;
+                document.getElementById('characterRows').appendChild(row);
+            });
+        }
+
+        // Initialize character rows when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            initAaduCharacterRows();
+        });
+
+        function addCharacterRow() {
+            charRowCount++;
+            const id = charRowCount;
+            const row = document.createElement('div');
+            row.className = 'char-row';
+            row.id = `charRow-${id}`;
+            row.innerHTML = `
+                <input type="text" placeholder="Character name (e.g. Shaji Pappan)" id="charName-${id}">
+                <div>
+                    <input type="file" accept="image/*" id="charImage-${id}" onchange="previewChar(${id})">
+                    <img id="charPreview-${id}" class="char-preview" alt="preview">
+                </div>
+                <button class="remove-char-btn" onclick="removeCharRow(${id})">✕</button>
+            `;
+            document.getElementById('characterRows').appendChild(row);
+        }
+
+        function removeCharRow(id) {
+            const row = document.getElementById(`charRow-${id}`);
+            if (row) row.remove();
+        }
+
+        function previewChar(id) {
+            const fileInput = document.getElementById(`charImage-${id}`);
+            const preview = document.getElementById(`charPreview-${id}`);
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => { preview.src = e.target.result; preview.style.display = 'block'; };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
 
         async function generateComicStoryboard() {
             const movieNames = document.getElementById('movieNames').value.trim();
@@ -508,13 +714,11 @@
             const comicContainer = document.getElementById('comicContainer');
             const btn = document.getElementById('generateBtn');
 
-            if (!movieNames) {
-                showError('Please enter movie names');
-                return;
-            }
-
-            if (!fileInput.files || fileInput.files.length === 0) {
-                showError('Please select at least one SRT file');
+            if (!movieNames) { showError('Please enter movie names'); return; }
+            
+            // Requirements check: If no preset, SRT is mandatory. If preset, SRT is optional.
+            if (!activePreset && (!fileInput.files || fileInput.files.length === 0)) {
+                showError('Please select at least one SRT file or load a preset');
                 return;
             }
 
@@ -525,22 +729,34 @@
 
             try {
                 const formData = new FormData();
-                formData.append('movieNames', movieNames);
                 
-                for (let i = 0; i < fileInput.files.length; i++) {
-                    formData.append('srtFiles', fileInput.files[i]);
+                if (activePreset) {
+                    formData.append('presetKey', activePreset);
+                } else {
+                    formData.append('movieNames', movieNames);
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('srtFiles', fileInput.files[i]);
+                    }
                 }
 
-                const endpoint = fileInput.files.length > 1 
-                    ? '/movie/generate-combined-comic-storyboard'
-                    : '/movie/generate-comic-storyboard';
-
-                if (fileInput.files.length === 1) {
-                    formData.delete('srtFiles');
-                    formData.append('srtFile', fileInput.files[0]);
-                    formData.delete('movieNames');
-                    formData.append('movieName', movieNames);
+                // Collect character reference images
+                const charNames = [];
+                for (let i = 1; i <= charRowCount; i++) {
+                    const nameEl = document.getElementById(`charName-${i}`);
+                    const imgEl = document.getElementById(`charImage-${i}`);
+                    if (!nameEl || !imgEl) continue; // row was removed
+                    if (imgEl.files && imgEl.files[0]) {
+                        charNames.push((nameEl.value.trim() || `Character ${i}`));
+                        formData.append('characterImages', imgEl.files[0]);
+                    }
                 }
+                if (charNames.length > 0) {
+                    formData.append('characterNames', charNames.join(','));
+                }
+
+                const endpoint = activePreset 
+                    ? '/movie/generate-preset-comic-storyboard'
+                    : '/movie/generate-combined-comic-storyboard';
 
                 const response = await fetch(`${API_URL}${endpoint}`, {
                     method: 'POST',
@@ -548,9 +764,14 @@
                 });
 
                 const data = await response.json();
+                console.log('📡 AI Response Data:', data);
 
                 if (!response.ok) {
                     throw new Error(data.message || 'Failed to generate comic storyboard');
+                }
+
+                if (!data || (typeof data !== 'object')) {
+                    throw new Error('Invalid response format from server');
                 }
 
                 displayComicStoryboard(data);
@@ -568,7 +789,24 @@
             const comicGrid = document.getElementById('comicGrid');
             const comicContainer = document.getElementById('comicContainer');
 
-            comicTitle.textContent = data.movieName || data.movies.join(' & ');
+            // Robust title display with extreme safety
+            let displayTitle = 'Generated Storyboard';
+            
+            try {
+                if (data && data.movieName) {
+                    displayTitle = data.movieName;
+                } else if (data && data.movies && Array.isArray(data.movies) && data.movies.length > 0) {
+                    displayTitle = data.movies.join(' & ');
+                } else if (data && data.storyboard && data.storyboard.movieName) {
+                    displayTitle = data.storyboard.movieName;
+                } else if (data && data.movies && !Array.isArray(data.movies)) {
+                    displayTitle = String(data.movies);
+                }
+            } catch (e) {
+                console.warn('Title display error:', e);
+            }
+            
+            comicTitle.textContent = displayTitle;
             comicGrid.innerHTML = '';
 
             // Display the script first
@@ -606,9 +844,20 @@
         }
 
         function createScenePanel(scene) {
-            const visualElementsHTML = scene.visualElements
-                ? scene.visualElements.map(el => `<span class="visual-tag">${el}</span>`).join('')
-                : '';
+            if (!scene) return '<div class="scene-panel">Scene data unavailable</div>';
+
+            // Safely generate visual elements tags
+            let visualElementsHTML = '';
+            try {
+                if (scene && scene.visualElements && Array.isArray(scene.visualElements)) {
+                    visualElementsHTML = scene.visualElements
+                        .filter(el => el !== undefined && el !== null)
+                        .map(el => `<span class="visual-tag">${el}</span>`)
+                        .join('');
+                }
+            } catch (e) {
+                console.warn('Visual elements error:', e);
+            }
 
             // Handle Pixazo image URL or show placeholder
             const imageHTML = scene.imageUrl 
@@ -635,7 +884,21 @@
             error.textContent = '❌ ' + message;
             error.classList.add('show');
             error.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            console.error('FrameX Error:', message);
         }
+
+        // Global Error Handler
+        window.onerror = function(msg, url, line, col, error) {
+            console.error('Global Error Detected:', msg, 'at', url, ':', line);
+            showError(`JS Error: ${msg} (Line ${line})`);
+            return false;
+        };
+
+        // Handle unhandled rejections
+        window.onunhandledrejection = function(event) {
+            console.error('Unhandled Rejection:', event.reason);
+            showError(`Promise Error: ${event.reason}`);
+        };
     </script>
 </body>
 </html>

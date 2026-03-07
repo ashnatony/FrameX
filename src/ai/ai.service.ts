@@ -94,22 +94,23 @@ Write a complete story summary now:`;
     try {
       // Prepare combined transcripts with clear separation
       const maxTranscriptPerMovie = 20000;
-      const combinedContent = movies.map((movie, index) => {
+      const moviesArray = (movies && Array.isArray(movies)) ? movies : [];
+      const combinedContent = moviesArray.map((movie, index) => {
         const truncated = movie.transcript.length > maxTranscriptPerMovie
           ? movie.transcript.substring(0, maxTranscriptPerMovie) + '...'
           : movie.transcript;
         
         return `
-=== MOVIE ${index + 1}: ${movie.name} ===
+=== MOVIE ${index + 1}: ${movie.name || 'Unknown'} ===
 ${truncated}
 `;
       }).join('\n\n');
 
       const prompt = `
-You are a professional movie story writer. You have been provided with subtitles from ${movies.length} related movies: ${movies.map(m => m.name).join(' and ')}.
+You are a professional movie story writer. You have been provided with subtitles from ${moviesArray.length} related movies: ${moviesArray.map(m => m.name || 'Unknown').join(' and ') || 'the provided script'}.
 
 Create a comprehensive 500-800 word story summary that:
-- Covers the complete narrative arc across all ${movies.length} movies
+- Covers the complete narrative arc across all ${moviesArray.length} movies
 - Explains how the story flows from one movie to the next
 - Introduces main characters and their development
 - Describes the central conflicts and how they evolve
@@ -145,7 +146,7 @@ Write a complete combined story summary now:`;
     }
   }
 
-  async generateComicScenes(script: string, movieName: string): Promise<any> {
+  async generateComicScenes(script: string, movieName: string, characterImages?: Array<{ name: string; mimeType: string; buffer: Buffer }>): Promise<any> {
     if (!this.model) {
       throw new HttpException(
         'Gemini AI not configured. Please set GEMINI_API_KEY in environment variables',
@@ -154,28 +155,51 @@ Write a complete combined story summary now:`;
     }
 
     try {
+      // Analyze character reference images if provided
+      let characterReferenceSection = '';
+      if (characterImages && characterImages.length > 0) {
+        console.log(`🖼️  Analyzing ${characterImages.length} character reference image(s) with Gemini Vision...`);
+        const characterDescriptions = await this.analyzeCharacterImages(characterImages);
+
+        // Always ensure Pinky (the goat) has an accurate hardcoded description
+        if (!characterDescriptions['Pinky']) {
+          characterDescriptions['Pinky'] = 'A small, completely white domestic goat with no horns whatsoever, soft fluffy white fur all over its body, small dark hooves, gentle brown eyes, and a short white tail. Pinky is the beloved pet goat of the group and appears throughout the movie as a small, innocent, hornless white goat.';
+        }
+
+        if (Object.keys(characterDescriptions).length > 0) {
+          characterReferenceSection = `
+CHARACTER REFERENCE DICTIONARY (EXTREMELY IMPORTANT - USE THESE EXACT DESCRIPTIONS):
+The following characters were identified from uploaded reference photos. You MUST use the exact visual details provided below for EVERY scene these characters appear in:
+${Object.entries(characterDescriptions).map(([name, desc]) => `- ${name}: ${desc}`).join('\n')}
+
+For any character NOT listed above, use your knowledge of the movie to describe their appearance in similar detail.
+`;
+        }
+      } else {
+        characterReferenceSection = `
+CRITICAL INSTRUCTION FOR VISUAL LIKENESS: 
+You must identify the actual real-world actors who played these characters in the movie: "${movieName}". 
+DO NOT just use their name in the visual description. Image generators often fail with just names.
+Instead, explicitly describe their EXACT physical facial features, body type, and iconic costume from the movie in every scene description.
+`;
+      }
+
       const prompt = `
 You are a professional comic book artist and storyboard creator. Based on the following movie story summary for "${movieName}", 
 create a detailed comic book storyboard with EXACTLY 12 scenes.
 
 Story Summary:
 ${script}
+${characterReferenceSection}
 
 Your task:
 1. Divide the story into EXACTLY 12 key scenes that tell the complete story
 2. For each scene, provide:
    - Scene number (1-12)
-   - A clear, visual description of what's happening (suitable for creating an illustration)
+   - A clear, visual description of what's happening using the character details above (suitable for creating an illustration)
    - The key dialogue or narration for that scene (2-3 sentences max)
    - The emotional tone/mood of the scene
    - Key visual elements (characters, setting, actions)
-
-CRITICAL INSTRUCTION FOR VISUAL LIKENESS: 
-You must identify the actual real-world actors who played these characters in the movie: "${movieName}". 
-DO NOT just use their name in the visual "description". Image generators often fail with just names.
-Instead, you MUST explicitly describe their EXACT physical facial features, body type, and iconic costume from the movie in every single scene description.
-EXAMPLE AND STRICT REQUIREMENT: For the character "Shaji Pappan", you MUST describe him as "Indian Malayalam actor Jayasurya, man with a thick handlebar mustache, wearing a black shirt, a red mundu, and black aviator sunglasses."
-Apply this level of intense physical and costume description to ALL characters instead of just using their names.
 
 Format your response as a JSON array with this structure:
 [
@@ -193,10 +217,9 @@ Format your response as a JSON array with this structure:
 Make sure:
 - Each scene is visually distinct and captures a key story moment
 - Scenes flow chronologically from beginning to end
-- Descriptions use REAL ACTOR NAMES for character likeness 
-- Descriptions are vivid and specific for creating comic panels
+- Descriptions are vivid and specific, incorporating the character details above
 - The 12 scenes together tell the complete story arc
-- CRITICAL: Ensure your output is STRICTLY valid JSON. Do NOT use unescaped double quotes inside the string values. Use single quotes instead of double quotes inside descriptions.
+- CRITICAL: Ensure your output is STRICTLY valid JSON. Do NOT use unescaped double quotes inside the string values. Use single quotes instead.
 
 Return ONLY the JSON array, no additional text.`;
 
@@ -257,6 +280,130 @@ Return ONLY the JSON array, no additional text.`;
       console.error('Error generating comic scenes with Gemini:', error.message);
       throw new HttpException(
         'Failed to generate comic scenes: ' + error.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * Use Gemini Vision to analyze uploaded actor reference images.
+   * Returns a map of { characterName -> detailed appearance description }.
+   */
+  private async analyzeCharacterImages(
+    characterImages: Array<{ name: string; mimeType: string; buffer: Buffer }>,
+  ): Promise<Record<string, string>> {
+    const descriptions: Record<string, string> = {};
+
+    for (const charImage of characterImages) {
+      try {
+        console.log(`🔍 Analyzing image for character: "${charImage.name}"...`);
+
+        const imagePart = {
+          inlineData: {
+            data: charImage.buffer.toString('base64'),
+            mimeType: charImage.mimeType,
+          },
+        };
+
+        const analysisPrompt = `You are a visual description expert helping an AI image generator create hyper-accurate comic book panels of specific real people.
+Analyze this reference photo extremely carefully and write a rich, DETAILED description of exactly 10 sentences about this person's visual appearance.
+
+Each sentence should focus on one specific aspect:
+1. Overall impression: approximate age, gender, ethnicity, and general vibe
+2. Skin: exact skin tone, texture, complexion (e.g., warm medium-brown skin, olive complexion)
+3. Face shape: jaw shape, cheekbones, face length, overall face structure
+4. Eyes: exact eye color, shape, size, eyelid fold, eyebrow thickness and arch
+5. Nose and mouth: nose shape, lip thickness, any notable features
+6. Hair: exact color, length, texture, style, any parting or styling details
+7. Facial hair: EXACT description of mustache/beard/stubble style, color, density, shape - or confirm clean-shaven
+8. Body build and posture: height impression, body frame, shoulder width, overall physique
+9. Clothing: describe EVERY visible item of clothing with exact colors, patterns, fabric type, fit
+10. Accessories and extras: glasses style/color, jewellery, hats, tattoos, or anything distinctive
+
+Return ONLY the 10 sentences of description as a continuous paragraph, no labels, no other text.`;
+
+        const result = await this.model.generateContent([analysisPrompt, imagePart]);
+        const description = result.response.text().trim();
+
+        console.log(`✅ Character "${charImage.name}": ${description.substring(0, 80)}...`);
+        descriptions[charImage.name] = description;
+
+      } catch (error) {
+        console.warn(`⚠️  Could not analyze image for "${charImage.name}": ${error.message}`);
+      }
+    }
+
+    return descriptions;
+  }
+
+  /**
+   * Generates a comic storyboard directly from a pre-defined set of scenes.
+   * Skips Gemini text generation and goes straight to Pixazo image generation.
+   */
+  async generateComicFromScenes(scenes: any[], movieName: string, characterImages?: Array<{ name: string; mimeType: string; buffer: Buffer }>): Promise<any> {
+    try {
+      let characterDescriptions: Record<string, string> = {};
+
+      if (characterImages && characterImages.length > 0) {
+        console.log(`🖼️  Analyzing ${characterImages.length} character reference image(s) with Gemini Vision...`);
+        characterDescriptions = await this.analyzeCharacterImages(characterImages);
+      }
+
+      // Always ensure Pinky (the goat) has an accurate hardcoded description
+      if (!characterDescriptions['Pinky']) {
+        characterDescriptions['Pinky'] = 'A small, completely white domestic goat with no horns whatsoever, soft fluffy white fur all over its body, small dark hooves, gentle brown eyes, and a short white tail. Pinky is the beloved pet goat of the group and appears throughout the movie as a small, innocent, hornless white goat.';
+      }
+
+      console.log('🎨 Starting Pixazo image generation for preset scenes...');
+      
+      // Inject character descriptions into scene descriptions for the image generator
+      const sceneDescriptions = scenes.map(scene => {
+        let enhancedDescription = scene.description;
+        
+        // Match characters in description and append their visual details
+        Object.entries(characterDescriptions).forEach(([name, desc]) => {
+          if (enhancedDescription.toLowerCase().includes(name.toLowerCase())) {
+            enhancedDescription += ` Character ${name} looks like: ${desc}`;
+          }
+        });
+
+        return {
+          sceneNumber: scene.sceneNumber,
+          description: enhancedDescription,
+        };
+      });
+
+      const imageResults = await this.pixazoService.generateMultipleComicImages(sceneDescriptions);
+
+      const scenesWithImages = scenes.map(scene => {
+        const imageResult = imageResults.find(img => img.sceneNumber === scene.sceneNumber);
+        return {
+          ...scene,
+          imageUrl: imageResult?.imageUrl || null,
+          imageError: imageResult?.error || null,
+        };
+      });
+
+      // Group scenes into 6 frames (2 scenes per frame)
+      const frames = [];
+      for (let i = 0; i < 12; i += 2) {
+        frames.push({
+          frameNumber: Math.floor(i / 2) + 1,
+          scene1: scenesWithImages[i],
+          scene2: scenesWithImages[i + 1],
+        });
+      }
+
+      return {
+        movieName,
+        totalScenes: 12,
+        totalFrames: 6,
+        frames,
+      };
+    } catch (error) {
+      console.error('Error in generateComicFromScenes:', error.message);
+      throw new HttpException(
+        'Failed to generate comic from preset: ' + error.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
