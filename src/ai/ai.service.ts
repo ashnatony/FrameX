@@ -292,12 +292,10 @@ Return ONLY the JSON array, no additional text.`;
   private async analyzeCharacterImages(
     characterImages: Array<{ name: string; mimeType: string; buffer: Buffer }>,
   ): Promise<Record<string, string>> {
-    const descriptions: Record<string, string> = {};
-
-    for (const charImage of characterImages) {
+    console.log(`🔍 Analyzing ${characterImages.length} characters in parallel...`);
+    
+    const analysisPromises = characterImages.map(async (charImage) => {
       try {
-        console.log(`🔍 Analyzing image for character: "${charImage.name}"...`);
-
         const imagePart = {
           inlineData: {
             data: charImage.buffer.toString('base64'),
@@ -324,14 +322,19 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
 
         const result = await this.model.generateContent([analysisPrompt, imagePart]);
         const description = result.response.text().trim();
-
-        console.log(`✅ Character "${charImage.name}": ${description.substring(0, 80)}...`);
-        descriptions[charImage.name] = description;
-
+        console.log(`✅ Character "${charImage.name}" analysis complete.`);
+        return { name: charImage.name, description };
       } catch (error) {
         console.warn(`⚠️  Could not analyze image for "${charImage.name}": ${error.message}`);
+        return { name: charImage.name, description: `Appearance of ${charImage.name} (description generation failed).` };
       }
-    }
+    });
+
+    const results = await Promise.all(analysisPromises);
+    const descriptions: Record<string, string> = {};
+    results.forEach(res => {
+      descriptions[res.name] = res.description;
+    });
 
     return descriptions;
   }
@@ -406,6 +409,40 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
         'Failed to generate comic from preset: ' + error.message,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  /**
+   * Generates a cohesive 200-400 word summary based on a list of storyboard scenes.
+   */
+  async generateSummaryFromScenes(scenes: any[], movieName: string): Promise<string> {
+    if (!this.model) {
+      throw new HttpException('Gemini AI not configured', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    try {
+      const scenesInfo = scenes.map(s => `Scene ${s.sceneNumber}: ${s.title}\nDescription: ${s.description}\nDialogue: ${s.dialogue}`).join('\n\n');
+
+      const prompt = `
+You are a professional movie story writer. Based on the following 12 storyboard scenes from the movie "${movieName}", 
+write a cohesive and engaging 200-400 word story summary that connects these moments into a complete narrative.
+
+ storyboard scenes:
+${scenesInfo}
+
+Requirements:
+- Length: STRICTLY between 200 and 400 words.
+- Tone: Engaging and cinematic.
+- Content: Connect the scenes into a smooth story flow.
+- Format: Plain text paragraphs.
+
+Write the story summary now:`;
+
+      const result = await this.model.generateContent(prompt);
+      return result.response.text();
+    } catch (error) {
+      console.error('Error generating summary from scenes:', error.message);
+      return `Story summary for ${movieName} (automated generation failed, displaying scene-based fallback).`;
     }
   }
 }

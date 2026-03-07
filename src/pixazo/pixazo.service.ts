@@ -174,8 +174,8 @@ export class PixazoService {
   ): Promise<Array<{ sceneNumber: number; imageUrl: string | null; error?: string }>> {
     console.log(`🎬 Starting batch generation for ${scenes.length} scenes...`);
 
-    const results: Array<{ sceneNumber: number; imageUrl: string | null; error?: string }> = [];
-    const batchSize = 2; // Process 2 scenes at a time to avoid rate limits
+    const batchResults = [];
+    const batchSize = 4; // Process 4 scenes at a time for maximum speed
 
     // Process in batches to avoid overwhelming the API
     for (let i = 0; i < scenes.length; i += batchSize) {
@@ -200,20 +200,20 @@ export class PixazoService {
         }
       });
 
-      const batchResults = await Promise.all(batchPromises);
-      results.push(...batchResults);
+      const batchResultList = await Promise.all(batchPromises);
+      batchResults.push(...batchResultList);
 
       // Add a longer delay between batches to respect Pixazo rate limits
       if (i + batchSize < scenes.length) {
-        console.log('⏳ Waiting 8s before next batch to avoid rate limits...');
-        await this.sleep(8000); // 8 seconds delay
+        console.log('⏳ Waiting 4s before next batch to maximize speed...');
+        await this.sleep(4000); // Reduced delay to 4 seconds
       }
     }
 
-    const successCount = results.filter(r => r.imageUrl).length;
+    const successCount = batchResults.filter(r => r.imageUrl).length;
     console.log(`\n✨ Batch complete: ${successCount}/${scenes.length} images generated successfully`);
 
-    return results;
+    return batchResults;
   }
 
   /**
