@@ -612,9 +612,10 @@
             { name: 'V P Sasi',        hint: 'Joy Mathew' },
             { name: 'Sarbath Shameer', hint: 'Manikandan Achari' },
             { name: 'Dude',            hint: 'Sunny Wayne' },
-            { name: 'Pinky',           hint: 'White goat, no horns (no photo needed)' },
+            { name: 'Pinky',           hint: 'White goat, no horns' },
             { name: 'Cleetus',         hint: 'Chemban Vinod Jose' },
             { name: 'Saatan Xavier',   hint: 'Vijayaraghavan' },
+            { name: 'Lazar',           hint: 'Appani Sarath' },
         ];
 
         let activePreset = 'aadu1-preset';
@@ -622,24 +623,26 @@
         function loadAadu1Preset() {
             document.getElementById('movieNames').value = 'Aadu 1 - Oru Bheekara Jeeviyaan';
             activePreset = 'aadu1-preset';
+            // Update UI
+            updatePresetUI('Aadu 1');
+        }
+
+        function loadAadu2Preset() {
+            document.getElementById('movieNames').value = 'Aadu 2 - Shaji Pappan Return';
+            activePreset = 'aadu2-preset';
+            // Update UI
+            updatePresetUI('Aadu 2');
+        }
+
+        function updatePresetUI(name) {
             document.getElementById('scriptBadge').style.display = 'inline-flex';
-            document.getElementById('scriptBadge').textContent = '🔒 Script Locked: Aadu 1';
+            document.getElementById('scriptBadge').textContent = `🔒 Script Locked: ${name}`;
             
             // Clear current rows and re-init with Aadu characters
             const container = document.getElementById('characterRows');
             container.innerHTML = '';
             charRowCount = 0;
             initAaduCharacterRows();
-        }
-
-        function loadAadu2Preset() {
-            document.getElementById('movieNames').value = 'Aadu 2';
-            activePreset = 'aadu2-preset';
-            document.getElementById('scriptBadge').style.display = 'inline-flex';
-            document.getElementById('scriptBadge').textContent = '🔒 Script Locked: Aadu 2';
-            
-            // Note: Users of this project will need the aadu2-preset.json file
-            alert('Aadu 2 Preset Mode Active! \n\nWaiting for Aadu 2 manual script data. \n(Note: I will create the aadu2-preset.json once you provide the scenes!)');
         }
 
         function resetToNormalMode() {
@@ -810,7 +813,15 @@
             comicGrid.innerHTML = '';
 
             // Display the script first
-            if (data.script) {
+            if (data.storyboard && data.storyboard.summary) {
+                const scriptSection = document.createElement('div');
+                scriptSection.className = 'script-section';
+                scriptSection.innerHTML = `
+                    <div class="script-title">📖 Complete Story Script (~300 Words)</div>
+                    <div class="script-content" style="white-space: pre-wrap; line-height: 1.6; color: #d1d5db; font-family: 'Inter', sans-serif;">${data.storyboard.summary}</div>
+                `;
+                comicGrid.appendChild(scriptSection);
+            } else if (data.script) {
                 const scriptSection = document.createElement('div');
                 scriptSection.className = 'script-section';
                 scriptSection.innerHTML = `

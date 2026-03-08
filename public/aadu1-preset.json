@@ -1,6 +1,8 @@
-[
-  {
-    "sceneNumber": 1,
+{
+  "summary": "In the lush, high-range highlands of Kerala, a legendary tug-of-war competition brings the local village to life. Shaji Pappan, a charismatic and confident Indian man known for his rugged charm, thick handlebar mustache, and signature black shirt and red mundu, is the heart of his team. However, disaster strikes when he slips on a banana peel mid-competition, leading to a hilarious and embarrassing defeat. As if physical injury wasn't enough, Shaji faces domestic turmoil when his wife, fed up with his antics, packs her bags and leaves him while he recovers in bed. The story takes a turn for the absurd when Shaji and his team win a 'prize' during the festival: Pinky, a small, innocent, completely white domestic goat with no horns. This prize, far from what they expected, becomes an integral part of their chaotic journey. While traveling in their battered white van, the group encounters a police checkpoint, leading to a series of comedic misunderstandings, including the entire team being detained and forced to stand in a police station wearing nothing but colorful bermuda shorts. The plot thickens with the arrival of the 'Bangkok Gang,' led by 'Dude,' a stylishly dressed villain with finger-guns and over-the-top swagger, and the intimidating Saatan Xavier. They are in search of the 'Neela Koduveli,' a rare magical plant rumored to bring immense wealth. The narrative descends into a cross-country chase involving a mysterious savior, a chain of slippery thieves, and a climactic three-way brawl between Shaji's team, the police, and the Bangkok gang. In a shocking twist, a mysterious box believed to hold the plant contains only cowdung. The chaos peaks when Pinky the goat unwittingly eats the real Neela Koduveli, sparking a final, multi-frame chase through the Kerala countryside. Shaji Pappan, chasing the goat that ate his fortune, ends the tale in a state of glorious, high-octane mayhem.",
+  "scenes": [
+    {
+      "sceneNumber": 1,
     "title": "The Journey Begins",
     "description": "A stylized comic world map viewed from above, Bangkok marked with a red pin, a small cartoon airplane with a dotted travel path arcing across the ocean heading toward India. The route curves across water and land illustrated in comic style, ending at a green hill region labeled 'Kerala – High Range' with lush mountains and tea plantations.",
     "dialogue": "Oru sahayam cheythu tharanam...",
@@ -10,15 +12,15 @@
   {
     "sceneNumber": 2,
     "title": "Shaji Pappan — The Hero",
-    "description": "A crowded rural Kerala festival ground with villagers cheering during a tug-of-war competition, colorful festival banners, dust rising in the air. Center frame: Shaji Pappan, a stocky Indian man in his 30s with warm medium-brown skin, a very thick black handlebar mustache, wearing a white lungi and shirt, standing confidently with a mischievous grin. A large title card reads 'SHAJI PAPPAN' behind him in bold comic-book lettering.",
+    "description": "A crowded rural Kerala festival ground with villagers cheering during a tug-of-war competition. Center frame: Shaji Pappan, looking exactly like actor Jayasurya with a thick black handlebar mustache, wearing his iconic black shirt and vibrant red mundu (dhoti), standing confidently with a mischievous grin. A large title card reads 'SHAJI PAPPAN' behind him in bold comic-book lettering.",
     "dialogue": "Njaan undaayirunne aadum!",
     "mood": "Confident, comedic hero introduction",
-    "visualElements": ["festival ground", "tug-of-war rope", "cheering crowd", "Shaji Pappan", "hero title card"]
+    "visualElements": ["festival ground", "Shaji Pappan", "Jayasurya likeness", "black shirt", "red mundu", "hero title card"]
   },
   {
     "sceneNumber": 3,
     "title": "The Banana Peel Disaster",
-    "description": "Close-up of a yellow banana peel lying on dusty ground right under Shaji Pappan's foot as he strides toward the tug-of-war rope. Next instant: Shaji slipping dramatically, legs flying upward into the air, face frozen in shock, teammates reeling backward, village crowd erupting in laughter. Bold comic action lines and 'SLIPPPP!' text effect across the panel.",
+    "description": "Close-up of a yellow banana peel lying on dusty ground right under Shaji Pappan's foot as he strides toward the tug-of-war rope. Next instant: Shaji Pappan slipping dramatically, legs flying upward into the air, face frozen in shock, teammates reeling backward, village crowd erupting in laughter. Bold comic action lines and 'SLIPPPP!' text effect across the panel.",
     "dialogue": "Ayyo... NOOOO!",
     "mood": "Slapstick comedy, chaos",
     "visualElements": ["banana peel", "Shaji slipping", "legs in air", "shocked teammates", "laughing crowd", "action lines"]
@@ -34,7 +36,7 @@
   {
     "sceneNumber": 5,
     "title": "The Prize — A White Goat!",
-    "description": "Prize reveal at the festival: a village committee member with a microphone announces the tug-of-war prize. Presented dramatically on a decorated platform is a small, completely white domestic goat with no horns whatsoever, soft fluffy white fur, small dark hooves, and gentle brown eyes, tied with a bright ribbon. Shaji and his teammates stare in shocked disbelief. One teammate cups his hands to shout in realization.",
+    "description": "Prize reveal at the festival: a village committee member with a microphone announces the tug-of-war prize. Presented dramatically on a decorated platform is a small, completely white domestic goat with no horns whatsoever, soft fluffy white fur, small dark hooves, and gentle brown eyes, tied with a bright ribbon. Shaji Pappan and his teammates stare in shocked disbelief. One teammate cups his hands to shout in realization.",
     "dialogue": "Adutha varsham moori kuttan! — Ith penn aad aanallo!",
     "mood": "Surprised, comedic shock",
     "visualElements": ["committee microphone", "Pinky the white hornless goat", "prize ribbon", "shocked team", "festival stage"]
@@ -96,3 +98,4 @@
     "visualElements": ["Pinky eating plant and running", "Shaji chasing goat", "police chasing everyone", "pit fall", "total chaos", "finale caption"]
   }
 ]
+}

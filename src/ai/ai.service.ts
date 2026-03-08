@@ -1,5 +1,5 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
 import { PixazoService } from '../pixazo/pixazo.service';
 
 /**
@@ -14,7 +14,20 @@ import { PixazoService } from '../pixazo/pixazo.service';
 @Injectable()
 export class AiService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private readonly fallbackModels = [
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-pro',
+    'gemini-1.5-flash-8b',
+    'gemini-1.5-pro-latest'
+  ];
+
+  private readonly safetySettings = [
+    { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+    { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+  ];
 
   constructor(private readonly pixazoService: PixazoService) {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -23,13 +36,47 @@ export class AiService {
       console.warn('⚠️  GEMINI_API_KEY not found in environment variables');
     } else {
       this.genAI = new GoogleGenerativeAI(apiKey);
-      // Use Gemini 2.5 Flash for text/script generation only
-      this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
     }
   }
 
+  /**
+   * Safe generation with automatic model fallback for quota issues.
+   */
+  private async safeGenerateContent(prompt: string | any[]): Promise<string> {
+    if (!this.genAI) {
+      throw new HttpException('Gemini AI not configured', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    let lastError: any = null;
+
+    for (const modelName of this.fallbackModels) {
+      try {
+        console.log(`🤖 Attempting [${modelName}]...`);
+        const model = this.genAI.getGenerativeModel({ 
+          model: modelName,
+          safetySettings: this.safetySettings
+        });
+        const result = await model.generateContent(prompt);
+        return result.response.text();
+      } catch (error) {
+        lastError = error;
+        const msg = error.message || '';
+        if (msg.includes('429') || msg.includes('Quota') || msg.includes('404') || msg.includes('not found')) {
+          console.warn(`⚠️  Model [${modelName}] unavailable or throttled. Trying next...`);
+          continue;
+        }
+        throw error; 
+      }
+    }
+    
+    throw new HttpException(
+      `All Gemini models failed. Last error: ${lastError?.message || 'Unknown'}`,
+      HttpStatus.TOO_MANY_REQUESTS
+    );
+  }
+
   async generateScript(transcript: string, movieName: string): Promise<string> {
-    if (!this.model) {
+    if (!this.genAI) {
       throw new HttpException(
         'Gemini AI not configured. Please set GEMINI_API_KEY in environment variables',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -62,9 +109,7 @@ ${truncatedTranscript}
 
 Write a complete story summary now:`;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const script = response.text();
+      const script = await this.safeGenerateContent(prompt);
 
       if (!script || script.length < 100) {
         throw new HttpException(
@@ -84,7 +129,7 @@ Write a complete story summary now:`;
   }
 
   async generateCombinedScript(movies: Array<{ name: string; transcript: string }>): Promise<string> {
-    if (!this.model) {
+    if (!this.genAI) {
       throw new HttpException(
         'Gemini AI not configured. Please set GEMINI_API_KEY in environment variables',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -125,9 +170,7 @@ ${combinedContent}
 
 Write a complete combined story summary now:`;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const script = response.text();
+      const script = await this.safeGenerateContent(prompt);
 
       if (!script || script.length < 200) {
         throw new HttpException(
@@ -147,7 +190,7 @@ Write a complete combined story summary now:`;
   }
 
   async generateComicScenes(script: string, movieName: string, characterImages?: Array<{ name: string; mimeType: string; buffer: Buffer }>): Promise<any> {
-    if (!this.model) {
+    if (!this.genAI) {
       throw new HttpException(
         'Gemini AI not configured. Please set GEMINI_API_KEY in environment variables',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -164,6 +207,14 @@ Write a complete combined story summary now:`;
         // Always ensure Pinky (the goat) has an accurate hardcoded description
         if (!characterDescriptions['Pinky']) {
           characterDescriptions['Pinky'] = 'A small, completely white domestic goat with no horns whatsoever, soft fluffy white fur all over its body, small dark hooves, gentle brown eyes, and a short white tail. Pinky is the beloved pet goat of the group and appears throughout the movie as a small, innocent, hornless white goat.';
+        }
+
+        // ALWAYS enforce Shaji Pappan's signature style (Actor: Jayasurya)
+        const shajiStyle = 'looks exactly like actor Jayasurya, wearing a iconic black shirt and a vibrant red mundu (dhoti), thick black handlebar mustache, rugged confident facial features, cinematic lighting';
+        if (!characterDescriptions['Shaji Pappan']) {
+          characterDescriptions['Shaji Pappan'] = `Shaji Pappan, ${shajiStyle}.`;
+        } else if (!characterDescriptions['Shaji Pappan'].toLowerCase().includes('red mundu')) {
+          characterDescriptions['Shaji Pappan'] = `${characterDescriptions['Shaji Pappan']}, ${shajiStyle}.`;
         }
 
         if (Object.keys(characterDescriptions).length > 0) {
@@ -223,9 +274,7 @@ Make sure:
 
 Return ONLY the JSON array, no additional text.`;
 
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      let scenesText = response.text();
+      let scenesText = await this.safeGenerateContent(prompt);
 
       // Clean up the response to extract JSON
       scenesText = scenesText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
@@ -269,8 +318,12 @@ Return ONLY the JSON array, no additional text.`;
         });
       }
 
+      console.log('🤖 Generating 300-word story summary...');
+      const summary = await this.generateSummaryFromScenes(scenes, movieName);
+
       return {
         movieName,
+        summary,
         totalScenes: 12,
         totalFrames: 6,
         frames,
@@ -304,24 +357,20 @@ Return ONLY the JSON array, no additional text.`;
         };
 
         const analysisPrompt = `You are a visual description expert helping an AI image generator create hyper-accurate comic book panels of specific real people.
-Analyze this reference photo extremely carefully and write a rich, DETAILED description of exactly 10 sentences about this person's visual appearance.
+Analyze this reference photo extremely carefully and extract a list of precise, technical visual keywords (feature tokens) describing this person.
 
-Each sentence should focus on one specific aspect:
-1. Overall impression: approximate age, gender, ethnicity, and general vibe
-2. Skin: exact skin tone, texture, complexion (e.g., warm medium-brown skin, olive complexion)
-3. Face shape: jaw shape, cheekbones, face length, overall face structure
-4. Eyes: exact eye color, shape, size, eyelid fold, eyebrow thickness and arch
-5. Nose and mouth: nose shape, lip thickness, any notable features
-6. Hair: exact color, length, texture, style, any parting or styling details
-7. Facial hair: EXACT description of mustache/beard/stubble style, color, density, shape - or confirm clean-shaven
-8. Body build and posture: height impression, body frame, shoulder width, overall physique
-9. Clothing: describe EVERY visible item of clothing with exact colors, patterns, fabric type, fit
-10. Accessories and extras: glasses style/color, jewellery, hats, tattoos, or anything distinctive
+Focus on these categories:
+- Face: exact shape, skin tone, prominent features, eye shape/color.
+- Hair: exact color, length, texture, style.
+- Facial Hair: EXACT style, color, density (or clean-shaven).
+- Physique: body build, shoulder width.
+- Clothing: colors, fabric type, items.
+- Accessories: glasses, jewellery, hats.
 
-Return ONLY the 10 sentences of description as a continuous paragraph, no labels, no other text.`;
+Return ONLY a comma-separated list of 15-20 descriptive keywords (tokens), e.g., "sharp jawline, warm olive skin, thick dark eyebrows, messy black hair, salt and pepper stubble, athletic build, red cotton shirt, silver wire glasses". 
+Do not use full sentences. No intro or outro text. Output tokens only:`;
 
-        const result = await this.model.generateContent([analysisPrompt, imagePart]);
-        const description = result.response.text().trim();
+        const description = (await this.safeGenerateContent([analysisPrompt, imagePart])).trim();
         console.log(`✅ Character "${charImage.name}" analysis complete.`);
         return { name: charImage.name, description };
       } catch (error) {
@@ -343,7 +392,7 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
    * Generates a comic storyboard directly from a pre-defined set of scenes.
    * Skips Gemini text generation and goes straight to Pixazo image generation.
    */
-  async generateComicFromScenes(scenes: any[], movieName: string, characterImages?: Array<{ name: string; mimeType: string; buffer: Buffer }>): Promise<any> {
+  async generateComicFromScenes(scenes: any[], movieName: string, characterImages?: Array<{ name: string; mimeType: string; buffer: Buffer }>, preGeneratedSummary?: string): Promise<any> {
     try {
       let characterDescriptions: Record<string, string> = {};
 
@@ -355,6 +404,14 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
       // Always ensure Pinky (the goat) has an accurate hardcoded description
       if (!characterDescriptions['Pinky']) {
         characterDescriptions['Pinky'] = 'A small, completely white domestic goat with no horns whatsoever, soft fluffy white fur all over its body, small dark hooves, gentle brown eyes, and a short white tail. Pinky is the beloved pet goat of the group and appears throughout the movie as a small, innocent, hornless white goat.';
+      }
+
+      // ALWAYS enforce Shaji Pappan's signature style (Actor: Jayasurya)
+      const shajiStyle = 'looks exactly like actor Jayasurya, wearing a iconic black shirt and a vibrant red mundu (dhoti), thick black handlebar mustache, rugged confident facial features, cinematic lighting';
+      if (!characterDescriptions['Shaji Pappan']) {
+        characterDescriptions['Shaji Pappan'] = `Shaji Pappan, ${shajiStyle}.`;
+      } else if (!characterDescriptions['Shaji Pappan'].toLowerCase().includes('red mundu')) {
+        characterDescriptions['Shaji Pappan'] = `${characterDescriptions['Shaji Pappan']}, ${shajiStyle}.`;
       }
 
       console.log('🎨 Starting Pixazo image generation for preset scenes...');
@@ -397,8 +454,12 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
         });
       }
 
+      console.log('🤖 Handling story summary...');
+      const summary = preGeneratedSummary || await this.generateSummaryFromScenes(scenes, movieName);
+
       return {
         movieName,
+        summary,
         totalScenes: 12,
         totalFrames: 6,
         frames,
@@ -416,7 +477,7 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
    * Generates a cohesive 200-400 word summary based on a list of storyboard scenes.
    */
   async generateSummaryFromScenes(scenes: any[], movieName: string): Promise<string> {
-    if (!this.model) {
+    if (!this.genAI) {
       throw new HttpException('Gemini AI not configured', HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -425,24 +486,28 @@ Return ONLY the 10 sentences of description as a continuous paragraph, no labels
 
       const prompt = `
 You are a professional movie story writer. Based on the following 12 storyboard scenes from the movie "${movieName}", 
-write a cohesive and engaging 200-400 word story summary that connects these moments into a complete narrative.
+write a cohesive and engaging story summary that connects these moments into a complete narrative.
 
  storyboard scenes:
 ${scenesInfo}
 
 Requirements:
-- Length: STRICTLY between 200 and 400 words.
+- Length: approximately 300 words (250-350 range).
 - Tone: Engaging and cinematic.
 - Content: Connect the scenes into a smooth story flow.
 - Format: Plain text paragraphs.
 
-Write the story summary now:`;
+Write the 300-word story summary now:`;
 
-      const result = await this.model.generateContent(prompt);
-      return result.response.text();
+      const resultText = await this.safeGenerateContent(prompt);
+      console.log(`✅ Summary generated successfully (${resultText.split(' ').length} words)`);
+      return resultText;
     } catch (error) {
-      console.error('Error generating summary from scenes:', error.message);
-      return `Story summary for ${movieName} (automated generation failed, displaying scene-based fallback).`;
+      console.error(`❌ Error generating summary for ${movieName}:`, error.message);
+      if (error.response) {
+        console.error('API Response Error:', JSON.stringify(error.response.data));
+      }
+      return `Story summary for ${movieName} (automated generation failed: ${error.message}). Displaying scene-based fallback.`;
     }
   }
 }

@@ -1,98 +1,101 @@
-[
-  {
-    "sceneNumber": 1,
-    "title": "Aadu 2: The Return - Placeholder",
-    "description": "A high-octane opening scene in the Kerala high ranges. Shaji Pappan and his team are seen celebrating after their many adventures. The background shows lush green hills and a comic title card reading 'AADU 2'. Shaji Pappan is leading the group with his signature style.",
-    "dialogue": "Aadu 2 begins here!",
-    "mood": "Energetic, cinematic start",
-    "visualElements": ["Kerala hills", "Aadu 2 title", "Shaji Pappan team"]
+{
+  "summary": "Shaji Pappan returns in another whirlwind of action and comedy, his local hero status firmly intact as he continues to wear his iconic black shirt and vibrant red mundu. The story begins at a routine police checkpoint on a bridge, where a simple van driver is caught in a moment of dramatic tension. This initial spark ignites a series of events that draw Shaji Pappan back into the spotlight. Shaji, ever the protector of his 'pilleru' (his team), finds himself face-to-face with suspicious police officers, attempting to explain away a load of questionable organic fertilizer as simple 'cow dung water.' The domestic life of Shaji is just as lively, as he shares his ambitious dreams with his mother—mentioning an international tug-of-war tournament with a massive registration fee but a staggering prize: a golden cup weighing half a kilogram. This quest for glory leads to intense training and a humorous encounter with a dramatically praying bald man at a local altar. The tournament itself is a high-octane affair, with Shaji leading his team through aggressive rope-pulling battles that eventually culminate in a triumphant victory and a wild celebration. However, the path to peace is never smooth. Shaji’s personal life intertwines with the bustling energy of a Kerala junction as he navigates a personal discussion with his wife amidst a busy crowd. The stakes rise as a building burns ominously in the background, signaling the entry of more dangerous forces. Saathan Xaviour reappears, opening a mysterious wooden box that leads to a conspiratorial meeting between Lazar and another man, who are fixated on a perfectly crafted duplicate currency note. Shaji Pappan eventually finds himself in the most unexpected of places: an official government office being congratulated for his accidental role in solving a national crisis. The story ends with Shaji standing tall, a national hero who, through pure grit and accidental brilliance, made the whole nation proud.",
+  "scenes": [
+    {
+      "sceneNumber": 1,
+    "title": "Police Bridge Check",
+    "description": "A police checking scene on a bridge during daytime. Two police officers stand on the road stopping vehicles. A van driver inside a van is stopped in the middle of the bridge. One police officer raises his hand to stop the van. Cinematic Malayalam comic style, realistic lighting, bridge railings and road visible.",
+    "dialogue": "Police: Stop stop",
+    "mood": "Tense, official",
+    "visualElements": ["Police checkpoint", "Bridge", "Roadblock"]
   },
   {
     "sceneNumber": 2,
-    "title": "New Conflict - Placeholder",
-    "description": "Shaji Pappan and Arakkal Abu are in deep discussion in the village market. There is a new mystery brewing. People in the background are whispering. Arakkal Abu looks worried while Shaji remains confident.",
-    "dialogue": "Something is different this time, Shajiyetta.",
-    "mood": "Tense, investigative",
-    "visualElements": ["Village market", "Shaji Pappan", "Arakkal Abu"]
+    "title": "Dramatic Moment",
+    "description": "Same bridge checking scene. Shaji Pappan (black shirt, red mundu, thick moustache) is talking nervously to the police officers. The police look angry and start to beat him after he speaks. Cinematic Malayalam comic style, dynamic expressions, dramatic shading.",
+    "dialogue": "Man: Sir ee thottathilu valam ethileghi papanod sir samadhanam parayande varum..",
+    "mood": "Dramatic, violent",
+    "visualElements": ["Angry police", "Shaji Pappan", "Nervous man", "Drama"]
   },
   {
     "sceneNumber": 3,
-    "title": "Pinky's Return - Placeholder",
-    "description": "Pinky, the small white hornless goat, is seen happily munching on some grass. Shaji Pappan approaches her with affection. The sun is setting, creating a warm comic glow.",
-    "dialogue": "Pinky is safe with us.",
-    "mood": "Warm, peaceful",
-    "visualElements": ["Pinky the goat", "Shaji Pappan", "Sunset"]
+    "title": "Shaji Pappan Arrival",
+    "description": "Roadside police checking scene. Shaji Pappan (black shirt, red mundu, thick moustache, slightly rugged face) stands near a vehicle explaining something to police officers. Police look suspicious. Style: Cinematic Malayalam comic style, realistic lighting, detailed Kerala roadside background.",
+    "dialogue": "Shaji Pappan: Ith ente pillere sir ee..ithilu korach chanakavelam aleu..ath vittek.",
+    "mood": "Confident, persuasive",
+    "visualElements": ["Shaji Pappan", "Police", "Village road"]
   },
   {
     "sceneNumber": 4,
-    "title": "The Antagonist Appears - Placeholder",
-    "description": "A dark, mysterious figure is seen watching the group from a distance. The shadows are long and dramatic. This person seems to have a grudge against Shaji Pappan's team.",
-    "dialogue": "They have no idea what's coming.",
-    "mood": "Menacing, dark",
-    "visualElements": ["Shadowy figure", "Drama", "Distance"]
+    "title": "The Golden Cup Plan",
+    "description": "Inside a simple Kerala house. Shaji Pappan (black shirt, red mundu) sits talking to his mother. His mother listens carefully while sitting nearby. Style: Professional graphic novel, warm indoor lighting, detailed home background.",
+    "dialogue": "Shaji: Internation tournamentaa..registration fees thnnne 50,000 roopaya.pakshe jeychal indalo ara kilo de Swarna kappa..",
+    "mood": "Ambitious, domestic",
+    "visualElements": ["Shaji", "Mother", "Kerala house interior"]
   },
   {
     "sceneNumber": 5,
-    "title": "Planning the Mission - Placeholder",
-    "description": "Shaji and the gang (Cleetus, Sarbath Shameer, Sasi) are huddled around a map. They are planning their next big move. The lighting is focused and intense.",
-    "dialogue": "This is the plan.",
-    "mood": "Determined, focused",
-    "visualElements": ["Map", "Gang", "Focused lighting"]
+    "title": "The Prayer",
+    "description": "A house prayer corner. A bald man with hair only on the sides looks upward praying dramatically. Cinematic Malayalam comic style, dynamic expressions, detailed altar in background.",
+    "dialogue": "Bald Person: Padachoneee kalla kachoadakarane katholane",
+    "mood": "Humorous, dramatic prayer",
+    "visualElements": ["Bald man", "Prayer corner", "Religious symbols"]
   },
   {
     "sceneNumber": 6,
-    "title": "The Chase Begins - Placeholder",
-    "description": "A fast-paced chase sequence through the narrow roads of Kerala. The white van is back and driving at high speeds to evade someone. Dust is flying everywhere.",
-    "dialogue": "Speed up! They're gaining on us!",
-    "mood": "Action-packed, frantic",
-    "visualElements": ["White van", "Dust", "Chase"]
+    "title": "Tug of War Competition",
+    "description": "Tug of war competition ground. Two teams pulling rope aggressively. Crowds cheering in the background. Shaji Pappan and team visible. Style: High-octane action, dynamic composition, cinematic lighting.",
+    "dialogue": "Action: Aggressive rope pulling",
+    "mood": "Intense, action-packed",
+    "visualElements": ["Tug of war", "Crowd", "Athletic energy"]
   },
   {
     "sceneNumber": 7,
-    "title": "Humorous Setback - Placeholder",
-    "description": "A classic Aadu-style comedic moment. Shaji Pappan encounters an unexpected obstacle that leads to a funny tumble. His friends are reacting with a mix of help and laughter.",
-    "dialogue": "Not again!",
-    "mood": "Funny, slapstick",
-    "visualElements": ["Shaji tumble", "Friends reacting"]
+    "title": "Victory Celebration",
+    "description": "Celebration moment at tug of war ground. Shaji Pappan and his team are cheering wildly. Confetti or dust in the air. Style: Vibrant colors, celebratory energy, cinematic Malayalam comic style.",
+    "dialogue": "Team: Namakula cupaaa",
+    "mood": "Triumphant, ecstatic",
+    "visualElements": ["Trophy", "Cheering", "Victory"]
   },
   {
     "sceneNumber": 8,
-    "title": "Confronting Dude - Placeholder",
-    "description": "Shaji Pappan comes face to face with 'Dude' again. They are in a dramatic standoff. The background is a dusty construction site or warehouse.",
-    "dialogue": "We meet again, Dude.",
-    "mood": "Dramatic standoff",
-    "visualElements": ["Shaji Pappan", "Dude", "Industrial background"]
+    "title": "The Junction Discussion",
+    "description": "Roadside junction scene. Shaji Pappan (black shirt, red mundu, thick moustache) talks to his wife. Busy Kerala junction background with shops. Style: Detailed background, realistic lighting.",
+    "dialogue": "Shaji: Moha banga manasileporunno nte koode..adutha junction lu vida..athavumbo Korach kachodam kitum",
+    "mood": "Personal, slightly comedic",
+    "visualElements": ["Shaji", "Wife", "Roadside junction"]
   },
   {
     "sceneNumber": 9,
-    "title": "The Twist - Placeholder",
-    "description": "A major revelation occurs. Everyone is shocked. Shaji Pappan's expression is one of total disbelief as he realizes the truth about their quest.",
-    "dialogue": "So it was you all along?",
-    "mood": "Shocked, revelatory",
-    "visualElements": ["Realization", "Shocked faces"]
+    "title": "The Building Fire",
+    "description": "A building burning in the background with orange and red flames. A man watches the fire calmly from a distance. Cinematic composition, dramatic lighting, high contrast.",
+    "dialogue": "Man: This is my entertainment",
+    "mood": "Ominous, calm",
+    "visualElements": ["Burning building", "Fire", "Watching from afar"]
   },
   {
     "sceneNumber": 10,
-    "title": "Prepare for the Final Battle - Placeholder",
-    "description": "The team gears up for one last stand. They are putting on their iconic outfits and checking their gear. The energy is high and heroic.",
-    "dialogue": "Let's finish this.",
-    "mood": "Heroic, prepared",
-    "visualElements": ["Gearing up", "Heroic poses"]
+    "title": "The Mysterious Box",
+    "description": "A vehicle parked. Saathan Xaviour stands in front of it opening a box placed on top of the vehicle. Mysterious aura, cinematic Malayalam comic style, suspicious look.",
+    "dialogue": "Saathan Xaviour: ithentha soma..ninte appante ayurvedha kadaya?",
+    "mood": "Mysterious, suspicious",
+    "visualElements": ["Saathan Xaviour", "Vehicle", "Wooden box"]
   },
   {
     "sceneNumber": 11,
-    "title": "The Grand Finale Brawl - Placeholder",
-    "description": "A massive fight scene involving all the characters. It's chaotic but choreographed in a comic-book style with 'POW' and 'WHAM' text effects. Shaji is in his prime.",
-    "dialogue": "Tired yet?",
-    "mood": "Action, climactic",
-    "visualElements": ["Brawl", "Action text effects", "Chaos"]
+    "title": "The Duplicate Note",
+    "description": "Discussion between a man and Lazar examining a currency note carefully under a light. High detail on the note, dramatic shading. Comic panel composition.",
+    "dialogue": "Lazar: Kalakki lasazerta,orginal etha dupluctae etha enn reserve bankinu polum thirich ariyan patila.",
+    "mood": "Conspiratorial, focused",
+    "visualElements": ["Lazar", "Currency note", "Secret deal"]
   },
   {
     "sceneNumber": 12,
-    "title": "Success and Celebration - Placeholder",
-    "description": "The mission is accomplished. Shaji Pappan and the gang are celebrating their victory. Pinky the goat is with them, and the final panel shows a sunset and 'THE END?' teaser.",
-    "dialogue": "We did it! — For now...",
-    "mood": "Celebratory, happy ending",
-    "visualElements": ["Victory celebration", "Pinky", "The End teaser"]
+    "title": "National Hero",
+    "description": "Official government office scene. An official in a suit shakes hands with and congratulates Shaji Pappan (black shirt, red mundu). National flags in the background. Style: Heroic, formal, cinematic lighting.",
+    "dialogue": "Official: Mr shaji ,congrats,we have found out that this Came to u by mistake.the whole nation is proud of u",
+    "mood": "Respectful, heroic",
+    "visualElements": ["Shaji Pappan", "Official", "Government office"]
   }
 ]
+}

@@ -113,14 +113,17 @@ export class MovieService {
         throw new HttpException(`Preset ${presetKey} not found`, HttpStatus.NOT_FOUND);
       }
 
-      const presetData = JSON.parse(fs.readFileSync(presetPath, 'utf8'));
-      const movieName = presetKey.replace('-', ' ').toUpperCase(); // Simple name formatting
+      const presetContent = JSON.parse(fs.readFileSync(presetPath, 'utf8'));
+      const scenes = presetContent.scenes || presetContent; // Handle both old array and new object format
+      const preSummary = presetContent.summary || null;
+      
+      const movieName = presetKey.replace('-', ' ').toUpperCase();
 
       console.log('🎨 Creating comic storyboard from preset scenes...');
-      const comicStoryboard = await this.aiService.generateComicFromScenes(presetData, movieName, characterImages);
+      const comicStoryboard = await this.aiService.generateComicFromScenes(scenes, movieName, characterImages, preSummary);
 
       console.log('✨ Preset comic storyboard generated successfully!');
-      return { script: 'Using preset Aadu 1 storyboard script provided by user.', storyboard: comicStoryboard };
+      return { script: preSummary || `Using preset ${presetKey.toUpperCase()} storyboard script provided by user.`, storyboard: comicStoryboard };
     } catch (error) {
       console.error('❌ Error in generatePresetComicStoryboard:', error.message);
       throw error;

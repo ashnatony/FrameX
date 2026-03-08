@@ -97,7 +97,10 @@ export class PixazoService {
    * Create a full-color comic-style prompt optimized for storyboard visuals
    */
   private createComicPrompt(description: string, sceneNumber: number): string {
-    return `High quality graphic novel illustration, vibrant comic book art style, marvel or dc comic aesthetic, cinematic lighting, dramatic shading, detailed character faces, scene ${sceneNumber}: ${description}. Style: professional western comic book, full color, ink and color washes, masterpiece`;
+    const globalKeywords = 'masterpiece, 8k resolution, cinematic lighting, extreme detail, sharp focus, professional color grading, unreal engine 5 render style, high-end graphic novel art';
+    const negativeGuidance = '[no text, no speech bubbles, no distorted hands, no watermark, no signatures, no low quality, no blur]';
+    
+    return `${globalKeywords}, ${description}, scene ${sceneNumber}. Style: vibrant american comic book, bold inks, dynamic composition, dc comics aesthetic. ${negativeGuidance}`;
   }
 
   /**
